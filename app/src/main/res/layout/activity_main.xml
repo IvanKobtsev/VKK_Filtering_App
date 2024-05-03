@@ -6,13 +6,79 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/Logo_Description"
+        android:rotation="90"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:src="@drawable/bg" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="235dp"
+        android:layout_height="234dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageEditorOpener"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.895"
+        app:srcCompat="@drawable/logo"
+        android:contentDescription="@string/Logo_Description" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/imageEditorOpener"
+        android:layout_width="240dp"
+        android:layout_height="60dp"
+        android:layout_margin="10dp"
+        android:background="@color/MainButtonBGColor"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/tektur_bold"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/ImageEditor_ButtonLabel"
+        android:textColor="@color/TitleFontColor"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tDCubeOpener"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextSizeCheck" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/tDCubeOpener"
+        android:layout_width="110dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="264dp"
+        android:background="@color/MainButtonBGColor"
+        android:fontFamily="@font/tektur_bold"
+        android:text="@string/TDCube_ButtonLabel"
+        android:textColor="@color/TitleFontColor"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.981"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextSizeCheck" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/splineEditorOpener"
+        android:layout_width="110dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="264dp"
+        android:background="@color/MainButtonBGColor"
+        android:fontFamily="@font/tektur_bold"
+        android:text="@string/Spline_ButtonLabel"
+        android:textColor="@color/TitleFontColor"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tDCubeOpener"
+        app:layout_constraintHorizontal_bias="0.814"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

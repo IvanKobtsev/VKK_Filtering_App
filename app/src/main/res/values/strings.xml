@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">VKK_Filtering_App</string>
+    <string name="Spline_ButtonLabel">Сплайны</string>
+    <string name="TDCube_ButtonLabel">3D-кубик</string>
+    <string name="ImageEditor_ButtonLabel">Редактор изображений</string>
+    <string name="Logo_Description">Логотип VKKF</string>
+    <string name="drawButton_Label">Отрисовать</string>
 </resources>

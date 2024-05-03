@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VKK_Filtering_App"
         tools:targetApi="31">
+        <activity
+            android:name=".TDCubeRenderer"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
