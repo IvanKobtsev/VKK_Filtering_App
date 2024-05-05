@@ -1,6 +1,8 @@
 package com.tsu.vkkfilteringapp
 
-class Point3D(var x: Float, var y: Float, var z: Float) {
+import kotlin.math.sqrt
+
+class Point3D(var x: Float = 0F, var y: Float = 0F, var z: Float = 0F) {
 
     fun translate(givenX: Float, givenY: Float, givenZ: Float) {
         x += givenX
@@ -23,6 +25,21 @@ class Point3D(var x: Float, var y: Float, var z: Float) {
             y /= w
             z /= w
         }
+    }
+
+    fun getCopy(): Point3D {
+        var newPoint = Point3D(x, y, z)
+        return newPoint
+    }
+
+    fun scaleByDivision(devisor: Float) {
+        x /= devisor
+        y /= devisor
+        z /= devisor
+    }
+
+    fun getVectorLength() : Float {
+        return sqrt(x * x + y * y + z * z)
     }
 
 }

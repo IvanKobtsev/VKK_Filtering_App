@@ -12,6 +12,7 @@ class TDCubeRenderer : AppCompatActivity() {
 
         val draw2D = Draw2D(this)
         setContentView(draw2D)
+        draw2D.init()
 
 //        val drawTheCube: Button = findViewById(R.id.startDrawingButton)
 //

@@ -1,6 +1,6 @@
 package com.tsu.vkkfilteringapp
 
-class Triangle3D(var vertices: MutableList<Point3D>) {
+class Triangle3D(var vertices: MutableList<Point3D> = mutableListOf(Point3D(), Point3D(), Point3D())) {
 
     fun translate(givenX: Float, givenY: Float, givenZ: Float) {
         for (vertex in vertices) {
@@ -29,6 +29,20 @@ class Triangle3D(var vertices: MutableList<Point3D>) {
 
         }
 
+    }
+
+    fun copyVertices(): MutableList<Point3D> {
+        var copiedVertices = mutableListOf(vertices[0].getCopy(), vertices[1].getCopy(), vertices[2].getCopy())
+        return copiedVertices
+    }
+
+    fun getCentroid() : Point3D {
+
+        var centroid = Point3D(
+            (vertices[0].x + vertices[1].x + vertices[2].x) / 3F,
+            (vertices[0].y + vertices[1].y + vertices[2].y) / 3F,
+            (vertices[0].z + vertices[1].z + vertices[2].z) / 3F)
+        return centroid
     }
 
 }
