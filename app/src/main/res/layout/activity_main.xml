@@ -14,26 +14,30 @@
         android:rotation="90"
         android:scaleX="2"
         android:scaleY="2"
-        android:src="@drawable/bg" />
+        android:src="@drawable/bg"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="235dp"
         android:layout_height="234dp"
         android:layout_marginTop="4dp"
+        android:contentDescription="@string/Logo_Description"
         app:layout_constraintBottom_toTopOf="@+id/imageEditorOpener"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageEditorOpener"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="@+id/imageEditorOpener"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.895"
-        app:srcCompat="@drawable/logo"
-        android:contentDescription="@string/Logo_Description" />
+        app:layout_constraintVertical_bias="0.559"
+        app:srcCompat="@drawable/logo" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/imageEditorOpener"
         android:layout_width="240dp"
         android:layout_height="60dp"
         android:layout_margin="10dp"
+        android:layout_marginBottom="12dp"
         android:background="@color/MainButtonBGColor"
         android:drawablePadding="8dp"
         android:fontFamily="@font/tektur_bold"
@@ -43,9 +47,9 @@
         android:textColor="@color/TitleFontColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tDCubeOpener"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tDCubeOpener"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/splineEditorOpener"
         tools:ignore="TextSizeCheck" />
 
     <androidx.appcompat.widget.AppCompatButton
