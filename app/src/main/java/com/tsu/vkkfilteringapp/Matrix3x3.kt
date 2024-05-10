@@ -85,4 +85,18 @@ class Matrix3x3(var rows: MutableList<MutableList<Float>> =
         return invertedMatrix
     }
 
+    fun print() : String {
+
+        var stringToReturn = ""
+
+        for (yi in 0..2) {
+            for (xi in 0..2) {
+                stringToReturn += rows[yi][xi].toString() + " "
+            }
+            stringToReturn += "\n"
+        }
+
+        return stringToReturn
+    }
+
 }

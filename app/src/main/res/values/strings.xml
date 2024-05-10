@@ -5,12 +5,5 @@
     <string name="ImageEditor_ButtonLabel">Редактор изображений</string>
     <string name="Logo_Description">Логотип VKKF</string>
     <string name="drawButton_Label">Отрисовать</string>
-    <string name="button">Button</string>
-    <string name="image_rotation">image rotation</string>
-    <string name="rotation">rotation</string>
-    <string name="affin_image">Аффинные преобразования изображения</string>
-    <string name="unsharp_masking">unsharp masking</string>
-    <string name="paint">paint</string>
-    <string name="processed_photo">It\'s a photo that can be processed</string>
-    <string name="do_photo">Сфотографировать</string>
+    <string name="show_images_label">Hide Images</string>
 </resources>

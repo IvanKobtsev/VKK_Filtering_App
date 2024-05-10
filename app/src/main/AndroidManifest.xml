@@ -5,6 +5,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -19,17 +20,6 @@
         <activity
             android:name=".TDCubeRenderer"
             android:exported="false" />
-        <activity android:name=".ImageActivity"/>
-        <provider
-            android:authorities="com.tsu.vkkfilteringapp.fileprovider"
-            android:name="androidx.core.content.FileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/fileprovider"/>
-        </provider>
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
