@@ -8,53 +8,90 @@
     tools:context=".TDCubeRenderer">
 
     <VideoView
-        android:id="@+id/adPlayer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="-36dp" />
+        android:id="@+id/bgPlayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.tsu.vkkfilteringapp.FastRenderingView
         android:id="@+id/fastRenderingView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/showImages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_width="210dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/wide_transparent_button"
         android:fontFamily="@font/tektur_medium"
         android:minHeight="48dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="5dp"
+        android:shadowColor="@color/white"
         android:text="@string/show_images_label"
-        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlSymmetry,TextSizeCheck" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="75dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="24dp"
+        android:id="@+id/nextShapeButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/arrow_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.839" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="75dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="24dp"
+        android:id="@+id/previousShapeButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/arrow_left"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.502" />
+        app:layout_constraintVertical_bias="0.839" />
+
+    <TextView
+        android:id="@+id/shapeToShowLabel"
+        android:layout_width="140dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/title_sub_button_bg"
+        android:fontFamily="@font/tektur_bold"
+        android:text="@string/shapeToShowDefaultLabelText"
+        android:textColor="@color/TitleFontColor"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/showImages"
+        app:layout_constraintEnd_toStartOf="@+id/nextShapeButton"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toEndOf="@+id/previousShapeButton" />
+
+    <VideoView
+        android:id="@+id/adPlayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

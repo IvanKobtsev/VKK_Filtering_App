@@ -1,16 +1,14 @@
 package com.tsu.vkkfilteringapp
 
+import android.graphics.PixelFormat
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.MediaController
+import android.provider.MediaStore.Audio.Media
 import android.widget.VideoView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.SimpleExoPlayer
+import androidx.appcompat.app.ActionBar
 import com.tsu.vkkfilteringapp.databinding.ActivityTdcubeRendererBinding
 
 class TDCubeRenderer : AppCompatActivity() {
@@ -23,33 +21,56 @@ class TDCubeRenderer : AppCompatActivity() {
         binding = ActivityTdcubeRendererBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val adPlayer = findViewById<VideoView>(R.id.adPlayer)
-        val adLink = Uri.parse("android.resource://$packageName/${R.raw.the_battle_of_kulikovo}")
-        adPlayer.setVideoURI(adLink)
+        val bgPlayer = findViewById<VideoView>(R.id.bgPlayer)
+        val adLink = Uri.parse("android.resource://$packageName/${R.raw.cube_bg}")
+        bgPlayer.setVideoURI(adLink)
 
-        binding.fastRenderingView.init()
+        binding.fastRenderingView.setZOrderOnTop(true)
+        binding.fastRenderingView.holder.setFormat(PixelFormat.TRANSLUCENT)
+        binding.fastRenderingView.init(binding.showImages.isChecked)
+
         binding.showImages.setOnClickListener{
-            binding.fastRenderingView.switchImages()
+            binding.fastRenderingView.switchImages(binding.showImages.isChecked)
         }
 
-    }
+        binding.previousShapeButton.setOnClickListener{
+            binding.nextShapeButton.setEnabled(true)
+            binding.nextShapeButton.alpha = 1F
+            binding.fastRenderingView.previousShape(binding.previousShapeButton)
+        }
 
-    // Timer
-//    val adTimer = object: CountDownTimer(30000, 30000) {
-//
-//        override fun onTick(millisUntilFinished: Long) {
-//
-//        }
-//
-//        override fun onFinish() {
-//            binding.adPlayer.alpha = 1F
-//            binding.adPlayer.requestFocus(0)
-//            binding.adPlayer.start()
-//        }
-//    }.start()
+        binding.nextShapeButton.setOnClickListener{
+            binding.previousShapeButton.setEnabled(true)
+            binding.previousShapeButton.alpha = 1F
+            binding.fastRenderingView.nextShape(binding.nextShapeButton)
+        }
+
+        binding.bgPlayer.setOnPreparedListener { mediaPlayer: MediaPlayer ->
+
+            mediaPlayer.isLooping = true
+
+            mediaPlayer.setScreenOnWhilePlaying(false)
+            val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+            val screenRatio = binding.bgPlayer.width / binding.bgPlayer.height.toFloat()
+            val scaleX = videoRatio / screenRatio
+            if (scaleX >= 1f) {
+                binding.bgPlayer.scaleX = scaleX
+            } else {
+                binding.bgPlayer.scaleY = 1F / scaleX
+            }
+
+            mediaPlayer.start()
+        }
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-//        binding.myCanvas.init(binding.myCanvas.width, binding.myCanvas.height)
+
+        if (!hasFocus) {
+            binding.fastRenderingView.surfaceDestroyed(binding.fastRenderingView.holder)
+        }
+        else {
+            binding.showImages.isChecked = false
+        }
     }
 }

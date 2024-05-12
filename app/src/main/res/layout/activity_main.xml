@@ -4,81 +4,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/background_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/Logo_Description"
-        android:rotation="90"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:src="@drawable/bg" />
+    <VideoView
+        android:id="@+id/bgPlayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="1"
+        android:translationZ="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="235dp"
-        android:layout_height="234dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_marginBottom="15dp"
+        android:contentDescription="@string/Logo_Description"
         app:layout_constraintBottom_toTopOf="@+id/imageEditorOpener"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.895"
-        app:srcCompat="@drawable/logo"
-        android:contentDescription="@string/Logo_Description" />
+        app:srcCompat="@drawable/logo" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/imageEditorOpener"
-        android:layout_width="240dp"
-        android:layout_height="60dp"
-        android:layout_margin="10dp"
-        android:background="@color/MainButtonBGColor"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/title_button_bg"
         android:drawablePadding="8dp"
-        android:fontFamily="@font/tektur_bold"
+        android:fontFamily="@font/tektur_regular"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/ImageEditor_ButtonLabel"
+        android:textAllCaps="false"
         android:textColor="@color/TitleFontColor"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/tDCubeOpener"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/subMenuButtonsWrapper"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TextSizeCheck" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/tDCubeOpener"
-        android:layout_width="110dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="84dp"
-        android:layout_marginBottom="264dp"
-        android:background="@color/MainButtonBGColor"
-        android:fontFamily="@font/tektur_bold"
-        android:text="@string/TDCube_ButtonLabel"
-        android:textColor="@color/TitleFontColor"
-        android:textSize="16sp"
+    <LinearLayout
+        android:id="@+id/subMenuButtonsWrapper"
+        android:layout_width="280dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="164dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.981"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextSizeCheck" />
+        app:layout_goneMarginTop="20dp">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/splineEditorOpener"
-        android:layout_width="110dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="264dp"
-        android:background="@color/MainButtonBGColor"
-        android:fontFamily="@font/tektur_bold"
-        android:text="@string/Spline_ButtonLabel"
-        android:textColor="@color/TitleFontColor"
-        android:textSize="16sp"
+        <Button
+            android:id="@+id/splineEditorOpener"
+            android:layout_width="130dp"
+            android:layout_height="70dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/title_sub_button_bg"
+            android:fontFamily="@font/tektur_regular"
+            android:text="@string/Spline_ButtonLabel"
+            android:textAllCaps="false"
+            android:textColor="@color/TitleFontColor"
+            android:textSize="22sp"
+            tools:ignore="ButtonStyle,TextSizeCheck" />
+
+        <Button
+            android:id="@+id/tDCubeOpener"
+            android:layout_width="130dp"
+            android:layout_height="70dp"
+            android:background="@drawable/title_sub_button_bg"
+            android:fontFamily="@font/tektur_regular"
+            android:text="@string/TDCube_ButtonLabel"
+            android:textAllCaps="false"
+            android:textColor="@color/TitleFontColor"
+            android:textSize="22sp"
+            tools:ignore="ButtonStyle,TextSizeCheck" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:translationZ="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tDCubeOpener"
-        app:layout_constraintHorizontal_bias="0.814"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextSizeCheck" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/title_loading_screen" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

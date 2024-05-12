@@ -28,12 +28,12 @@ class DrawThread() : Thread() {
     private var resources: Resources? = null
 
     // Temporary !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private val height = 2336
+    private val height = 2000
     private val width = 1080
 
     // Chosen preferences
     var blankShape = false
-    private var chosenShape = 1
+    var chosenShape = 1
 
     // Technical stuff
     private val paint: Paint = Paint()
@@ -76,15 +76,6 @@ class DrawThread() : Thread() {
         R.drawable.number20
     )
 
-    private val colors = listOf(
-        Color.BLACK,
-        Color.BLUE,
-        Color.GREEN,
-        Color.MAGENTA,
-        Color.RED,
-        Color.YELLOW,
-        Color.WHITE
-    )
     private val shapes = listOf(
         "d4",
         "d6",
@@ -150,7 +141,7 @@ class DrawThread() : Thread() {
                 canvas = surfaceHolder!!.lockCanvas()
                 synchronized(surfaceHolder!!) {
 
-                    fillTheCanvas(canvas!!)
+                    clearTheCanvas(canvas!!)
 
                     fillTrianglesToDraw()
 
@@ -177,17 +168,22 @@ class DrawThread() : Thread() {
 
     // My technical staff
 
-    fun init() {
+    fun init(drawBlank: Boolean) {
         paint.apply {
             isAntiAlias = true
             strokeCap = Paint.Cap.ROUND
             strokeWidth = 2F
             textSize = 100F
         }
-        shapeToShow = get3DObjectJson(shapes[chosenShape])
+        loadShapeToShow()
         fillTrianglesToDraw()
+        blankShape = drawBlank
         running = true
         start()
+    }
+
+    fun loadShapeToShow() {
+        shapeToShow = get3DObjectJson(shapes[chosenShape])
     }
 
     private fun get3DObjectJson(objectName: String): Mesh {
@@ -430,7 +426,7 @@ class DrawThread() : Thread() {
 
         trianglesToDraw = mutableListOf()
 
-        for (triangleInd in shapeToShow.triangles.indices) {
+        for (triangleInd in 0..<shapeToShow.triangles.size) {
             triangleToProject.vertices = shapeToShow.triangles[triangleInd].copyVertices()
 
             // Applying rotations
@@ -604,13 +600,7 @@ class DrawThread() : Thread() {
         }
     }
 
-    private fun fillTheCanvas(canvas: Canvas, givenColor: Int = Color.CYAN) {
-
-        paint.apply {
-            style = Paint.Style.FILL
-            color = givenColor
-        }
-        canvas.drawPaint(paint)
-
+    private fun clearTheCanvas(canvas: Canvas, givenColor: Int = Color.TRANSPARENT) {
+        canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR)
     }
 }

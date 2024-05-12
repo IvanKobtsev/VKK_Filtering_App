@@ -14,4 +14,5 @@
     <string name="paint">paint</string>
     <string name="processed_photo">It\'s a photo that can be processed</string>
     <string name="do_photo">Сфотографировать</string>
+    <string name="shapeToShowDefaultLabelText">D6 (Куб)</string>
 </resources>
