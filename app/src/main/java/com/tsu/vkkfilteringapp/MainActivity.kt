@@ -44,13 +44,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setting animation
+        // Loading animation
         animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-        animFadeIn.fillAfter = true
         animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-        animFadeOut.fillAfter = true
         animAppear = AnimationUtils.loadAnimation(this, R.anim.appear)
-        animAppear.fillAfter = true
 
         // Event listeners
         binding.tDCubeOpener.setOnClickListener {
@@ -85,8 +82,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             mediaPlayer.start()
-
-
         }
     }
 
@@ -108,34 +103,5 @@ class MainActivity : AppCompatActivity() {
         binding.overlay.startAnimation(animAppear)
         Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
         overlayAnimTimer.start()
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-
-//        binding.overlay.alpha = 1F
-//        Log.e("started", "started" + binding.overlay.alpha.toString())
-//        overlayAnimTimer.start()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("paused", "paused")
-        binding.overlay.alpha = 1F
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-
-        if (!hasFocus) {
-            binding.overlay.alpha = 1F
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        binding.overlay.alpha = 1F
     }
 }

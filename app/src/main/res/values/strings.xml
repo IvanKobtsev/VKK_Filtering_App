@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">VKK_Filtering_App</string>
+    <string name="app_name">VKK Filters</string>
     <string name="Spline_ButtonLabel">Сплайны</string>
-    <string name="TDCube_ButtonLabel">3D-кубик</string>
+    <string name="TDCube_ButtonLabel">3D-фигуры</string>
     <string name="ImageEditor_ButtonLabel">Редактор изображений</string>
     <string name="Logo_Description">Логотип VKKF</string>
     <string name="drawButton_Label">Отрисовать</string>
-    <string name="show_images_label">Скрыть картинки</string>
+    <string name="show_images_label">Картинки</string>
     <string name="button">Button</string>
     <string name="image_rotation">image rotation</string>
     <string name="rotation">rotation</string>
@@ -14,5 +14,5 @@
     <string name="paint">paint</string>
     <string name="processed_photo">It\'s a photo that can be processed</string>
     <string name="do_photo">Сфотографировать</string>
-    <string name="shapeToShowDefaultLabelText">D6 (Куб)</string>
+    <string name="shapeToShowDefaultLabelText">D6 (куб)</string>
 </resources>

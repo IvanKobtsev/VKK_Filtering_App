@@ -5,4 +5,6 @@
     <color name="MainButtonBGColor">#707070</color>
     <color name="TitleFontColor">#FFFFFF</color>
     <color name="MainFontColor">#000000</color>
+    <color name="CubeBGColor">#0E85F8</color>
+    <color name="CubeBGColorSecond">#05228a</color>
 </resources>

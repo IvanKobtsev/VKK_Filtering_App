@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.MediaStore.Audio.Media
+import android.util.Log
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.VideoView
 import androidx.appcompat.app.ActionBar
 import com.tsu.vkkfilteringapp.databinding.ActivityTdcubeRendererBinding
@@ -14,6 +17,17 @@ import com.tsu.vkkfilteringapp.databinding.ActivityTdcubeRendererBinding
 class TDCubeRenderer : AppCompatActivity() {
 
     private lateinit var binding: ActivityTdcubeRendererBinding
+    private lateinit var animFadeOut: Animation
+    private lateinit var animAppear: Animation
+
+    private val shapeNames = listOf(
+        "D4 (тетраэдр)",
+        "D6 (куб)",
+        "D8 (октаэдр)",
+        "D10 (???)",
+        "D12 (???)",
+        "D20 (икосаэдр)"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,11 +35,15 @@ class TDCubeRenderer : AppCompatActivity() {
         binding = ActivityTdcubeRendererBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Loading animations
+        animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        animAppear = AnimationUtils.loadAnimation(this, R.anim.appear)
+
         val bgPlayer = findViewById<VideoView>(R.id.bgPlayer)
         val adLink = Uri.parse("android.resource://$packageName/${R.raw.cube_bg}")
         bgPlayer.setVideoURI(adLink)
 
-        binding.fastRenderingView.setZOrderOnTop(true)
+        binding.fastRenderingView.setZOrderOnTop(false)
         binding.fastRenderingView.holder.setFormat(PixelFormat.TRANSLUCENT)
         binding.fastRenderingView.init(binding.showImages.isChecked)
 
@@ -36,13 +54,13 @@ class TDCubeRenderer : AppCompatActivity() {
         binding.previousShapeButton.setOnClickListener{
             binding.nextShapeButton.setEnabled(true)
             binding.nextShapeButton.alpha = 1F
-            binding.fastRenderingView.previousShape(binding.previousShapeButton)
+            binding.shapeToShowLabel.text = shapeNames[binding.fastRenderingView.previousShape(binding.previousShapeButton)]
         }
 
         binding.nextShapeButton.setOnClickListener{
             binding.previousShapeButton.setEnabled(true)
             binding.previousShapeButton.alpha = 1F
-            binding.fastRenderingView.nextShape(binding.nextShapeButton)
+            binding.shapeToShowLabel.text = shapeNames[binding.fastRenderingView.nextShape(binding.nextShapeButton)]
         }
 
         binding.bgPlayer.setOnPreparedListener { mediaPlayer: MediaPlayer ->
@@ -72,5 +90,25 @@ class TDCubeRenderer : AppCompatActivity() {
         else {
             binding.showImages.isChecked = false
         }
+    }
+
+    // Timer
+    private val overlayAnimTimer = object: CountDownTimer(3000, 3000) {
+
+        override fun onTick(millisUntilFinished: Long) {
+            binding.overlay.alpha = 1F
+        }
+
+        override fun onFinish() {
+            binding.overlay.startAnimation(animFadeOut)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        binding.overlay.startAnimation(animAppear)
+        Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
+        overlayAnimTimer.start()
     }
 }
