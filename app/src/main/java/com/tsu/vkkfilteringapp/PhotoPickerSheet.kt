@@ -21,7 +21,6 @@ import com.ablanco.imageprovider.ImageSource
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tsu.vkkfilteringapp.databinding.FragmentPhotoPickerBinding
-import com.tsu.vkkfilteringapp.filters.GaussianBlur
 import java.io.File
 
 class PhotoPickerSheet : BottomSheetDialogFragment() {

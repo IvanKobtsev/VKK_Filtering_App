@@ -37,10 +37,18 @@ class ImageActivity : AppCompatActivity() {
 //            takePhoto(view)
 //        }
 
-
+        binding.maskingTool.setOnClickListener {
+            val blur = UnsharpMasking(editedImage, 1.0, 1)
+            binding.imageToEdit.setImageBitmap(blur.newImg)
+            editedImage = blur.newImg
+        }
 
         binding.saveButton.setOnClickListener {
 
+        }
+
+        binding.faceRecognitionTool.setOnClickListener {
+            supportFragmentManager.beginTransaction().replace(R.id.toolProps, FacesToolFragment.newInstance()).commit()
         }
 
         binding.affineTransformTool.setOnClickListener {

@@ -1,63 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     tools:context=".AffineToolFragment">
 
-    <Button
-        android:id="@+id/affineButtonOrigTri1"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="1A" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/affineButtonOrigTri2"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="1B" />
+        <Button
+            android:id="@+id/affineButtonOrigTri1"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="1A" />
 
-    <Button
-        android:id="@+id/affineButtonOrigTri3"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="1C" />
+        <Button
+            android:id="@+id/affineButtonOrigTri2"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="1B" />
 
-    <Button
-        android:id="@+id/affineButtonTransTri1"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="2A" />
+        <Button
+            android:id="@+id/affineButtonOrigTri3"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="1C" />
 
-    <Button
-        android:id="@+id/affineButtonTransTri2"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="2B" />
+        <Button
+            android:id="@+id/affineButtonTransTri1"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="2A" />
 
-    <Button
-        android:id="@+id/affineButtonTransTri3"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:text="2C" />
+        <Button
+            android:id="@+id/affineButtonTransTri2"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="2B" />
 
-    <Button
-        android:id="@+id/affineApply"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp" />
+        <Button
+            android:id="@+id/affineButtonTransTri3"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:text="2C" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/affineApply"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/apply" />
+    </LinearLayout>
+</HorizontalScrollView>
