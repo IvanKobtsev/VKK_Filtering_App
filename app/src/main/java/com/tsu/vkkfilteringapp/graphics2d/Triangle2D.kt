@@ -5,7 +5,7 @@ import com.tsu.vkkfilteringapp.graphics3d.Triangle3D
 import com.tsu.vkkfilteringapp.matrices.Matrix3x3
 import com.tsu.vkkfilteringapp.matrices.Matrix4x4
 
-class Triangle2D(var vertices: MutableList<Point2D> = mutableListOf(Point2D(), Point2D(), Point2D()), var depth: Float = 0F, var lightAmount: Float = 0F, var imageId: Int = 0) {
+class Triangle2D(var vertices: MutableList<Point2D> = mutableListOf(Point2D(), Point2D(), Point2D()),  var lightAmount: Float = 0F, var depth: Float = 0F, var imageId: Int = 0) {
 
     constructor(matrix: Matrix3x3) : this() {
         vertices = mutableListOf(
@@ -81,6 +81,16 @@ class Triangle2D(var vertices: MutableList<Point2D> = mutableListOf(Point2D(), P
         return Point2D(
             (vertices[0].x + vertices[1].x + vertices[2].x) / 3,
             (vertices[0].y + vertices[1].y + vertices[2].y) / 3)
+    }
+
+    fun getScaledLightCopy(scaleFactor: Int) : Triangle2D {
+        val newTriangle = Triangle2D(mutableListOf(
+            Point2D(vertices[0].x * scaleFactor, vertices[0].y * scaleFactor),
+            Point2D(vertices[1].x * scaleFactor, vertices[1].y * scaleFactor),
+            Point2D(vertices[2].x * scaleFactor, vertices[2].y * scaleFactor)),
+            lightAmount)
+
+        return newTriangle
     }
 
 }

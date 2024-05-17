@@ -7,4 +7,5 @@
     <color name="MainFontColor">#000000</color>
     <color name="CubeBGColor">#0E85F8</color>
     <color name="CubeBGColorSecond">#05228a</color>
+    <color name="toolsLabelText">#000000</color>
 </resources>

@@ -1,10 +1,12 @@
 package com.tsu.vkkfilteringapp
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
@@ -13,11 +15,16 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import android.widget.VideoView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.tsu.vkkfilteringapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var binding: ActivityMainBinding
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
@@ -83,6 +90,9 @@ class MainActivity : AppCompatActivity() {
 
             mediaPlayer.start()
         }
+
+        registerPermission()
+        requestPermission()
     }
 
     // Timer
@@ -103,5 +113,48 @@ class MainActivity : AppCompatActivity() {
         binding.overlay.startAnimation(animAppear)
         Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
         overlayAnimTimer.start()
+    }
+
+    private fun registerPermission() {
+
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+//                if (it) {
+//                    Log.i("Permission: ", "Granted")
+//                    Toast.makeText(this, "Camera work", Toast.LENGTH_LONG).show()
+//                    //Log.d("start","when start")
+//                } else {
+//                    Log.i("Permission: ", "Denied")
+//                    Toast.makeText(this, "Camera not work", Toast.LENGTH_LONG).show()
+//                    //requestPermission()
+//                }
+            }
+    }
+
+    private fun requestPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.i("Permission: ", "Granted")
+            }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.CAMERA
+            ) -> {
+                Toast.makeText(
+                    this,
+                    "We need your permission to use the camera",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+
+            else -> {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
     }
 }

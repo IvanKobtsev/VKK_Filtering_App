@@ -4,119 +4,176 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginEnd="10dp"
     tools:context=".MainActivity">
 
 
     <ImageView
-        android:id="@+id/twoFish"
+        android:id="@+id/background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:alpha="123"
-        android:contentDescription="@string/processed_photo"
-        android:src="@drawable/background_screensaver_two_fish"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+        android:contentDescription="@string/background"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_white"
+        app:layout_constraintBottom_toTopOf="@+id/toolsScroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#FFFFFF"
+        android:elevation="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/icon_cross"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/icon_save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/imageToEdit"
+        android:layout_width="328dp"
+        android:layout_height="486dp"
+        android:background="@color/black"
+        android:contentDescription="@string/processed_photo"
+        android:elevation="5dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/toolProps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topBar"
+        app:srcCompat="@drawable/background_screensaver_two_fish" />
+
     <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
+        android:id="@+id/toolProps"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:elevation="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/toolsScroll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/toolsScroll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:id="@+id/linearView"
+            android:id="@+id/tools"
             android:layout_width="408dp"
             android:layout_height="60dp"
             android:gravity="end"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="TextSizeCheck">
 
             <Button
+                android:id="@+id/rotationTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rotation" />
+                android:alpha="0.8"
+                android:background="@drawable/icon_rotation"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/rotation"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
+                android:id="@+id/filtersTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button" />
+                android:alpha="0.8"
+                android:background="@drawable/icon_filters"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/filters"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
+                android:id="@+id/scalingTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button" />
+                android:alpha="0.8"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/scaling"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
+                android:id="@+id/faceRecognitionTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button" />
+                android:alpha="0.8"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/face_recognition"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
+                android:id="@+id/retouchTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/paint" />
+                android:alpha="0.8"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/retouch"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
+                android:id="@+id/maskingTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button" />
+                android:alpha="0.8"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/masking"
+                android:textColor="@color/toolsLabelText" />
 
             <Button
-                style="?android:attr/buttonBarButtonStyle"
-                android:id="@+id/mask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/unsharp_masking" />
-
-            <Button
+                android:id="@+id/affineTransformTool"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/affin_image" />
-
-            <Button
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button" />
-
+                android:alpha="0.8"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/affine_transform"
+                android:textColor="@color/toolsLabelText" />
 
         </LinearLayout>
     </HorizontalScrollView>
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="53dp"
-        android:layout_height="57dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
-        app:layout_constraintEnd_toStartOf="@+id/camera"
-        app:layout_constraintHorizontal_bias="0.06"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/add_pic_svgrepo_com" />
-
-    <ImageView
-        android:id="@+id/camera"
-        android:layout_width="65dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/viewfinder_svgrepo_com" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

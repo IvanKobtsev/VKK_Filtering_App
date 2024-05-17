@@ -1,18 +1,28 @@
 <resources>
     <string name="app_name">VKK Filters</string>
-    <string name="Spline_ButtonLabel">Сплайны</string>
-    <string name="TDCube_ButtonLabel">3D-фигуры</string>
     <string name="ImageEditor_ButtonLabel">Редактор изображений</string>
     <string name="Logo_Description">Логотип VKKF</string>
     <string name="drawButton_Label">Отрисовать</string>
     <string name="show_images_label">Картинки</string>
     <string name="button">Button</string>
     <string name="image_rotation">image rotation</string>
-    <string name="rotation">rotation</string>
-    <string name="affin_image">Аффинные преобразования изображения</string>
-    <string name="unsharp_masking">unsharp masking</string>
-    <string name="paint">paint</string>
+    <string name="rotation">Поворот</string>
+    <string name="filters">Фильтры</string>
+    <string name="scaling">Масштаб</string>
+    <string name="face_recognition">Лица</string>
+    <string name="Spline_ButtonLabel">Сплайны</string>
+    <string name="retouch">Ретушь</string>
+    <string name="masking">Нер. маскир.</string>
+    <string name="affine_transform">Аффин. преобр.</string>
+    <string name="TDCube_ButtonLabel">3D-фигуры</string>
     <string name="processed_photo">It\'s a photo that can be processed</string>
     <string name="do_photo">Сфотографировать</string>
     <string name="shapeToShowDefaultLabelText">D6 (куб)</string>
+    <string name="background">Background with symbols VKKF on it.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pick_a_photo">Выберите картинку</string>
+    <string name="takePhoto">Сделать снимок</string>
+    <string name="fromGallery">Из галереи</string>
+    <string name="apply">Применить</string>
 </resources>

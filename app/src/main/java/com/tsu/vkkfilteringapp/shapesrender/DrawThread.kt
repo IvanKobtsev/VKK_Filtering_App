@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorSpace.Rgb
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Path.FillType
@@ -63,7 +64,7 @@ class DrawThread() : Thread() {
     // Shape transform
     var shapeRotation = Point3D()
     private var shapeTranslation = Point3D(0F, 0F, 2F)
-    private var shapeScale = 1000F
+    private var shapeScale = 500F
 
     // Lighting
     private var lightDirection = Point3D(0F, 0F, -1F)
@@ -171,6 +172,7 @@ class DrawThread() : Thread() {
     }
 
     var running = false
+    private var secretActivated = false
     private var prevTime: Long = 0
     private var canvas: Canvas? = null
     override fun run() {
@@ -184,11 +186,16 @@ class DrawThread() : Thread() {
                     fillTrianglesToDraw()
 
                     if (showImages) {
-                        drawImages(canvas!!, pictures, !shapeToShow.hasTriangularFaces)
+                        if (!secretActivated) {
+                            drawImages(canvas!!, pictures, !shapeToShow.hasTriangularFaces)
+                        }
+                        else {
+                            renderTriangles(canvas!!)
+                            drawImages(canvas!!, numbers, !shapeToShow.hasTriangularFaces)
+                        }
                     }
                     else {
-//                        renderTriangles(canvas!!)
-                        drawImages(canvas!!, numbers, !shapeToShow.hasTriangularFaces)
+                        renderTriangles(canvas!!)
                     }
 
                 }
@@ -248,7 +255,6 @@ class DrawThread() : Thread() {
 
     private fun fillUpsideTriangle(triangle: Triangle2D, transformMatrix: Matrix3x3, bitmap: Bitmap, editedBitmap: Bitmap) {
 
-
         val currentPoint = Point2D(triangle.vertices[0].x, triangle.vertices[0].y)
 
         var leftBorder = currentPoint.x
@@ -266,6 +272,7 @@ class DrawThread() : Thread() {
 
                 editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
                     clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
+
                 ++currentPoint.x
             }
             
@@ -295,17 +302,8 @@ class DrawThread() : Thread() {
 
             while (currentPoint.x < rightBorder) {
 
-                val color =  bitmap.getPixel(clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
-                    clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight))
-
-                if (color.alpha == 0) {
-                    editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), Color.valueOf(triangle.lightAmount, triangle.lightAmount, triangle.lightAmount).toArgb())
-                }
-                else {
-                    editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), color)
-                }
-
-
+                editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
+                    clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
 
                 ++currentPoint.x
             }
@@ -346,13 +344,13 @@ class DrawThread() : Thread() {
                     triangle.vertices[0],
                     triangle.vertices[1],
                     secondMiddlePoint
-                )), transformMatrix, originalBitmap, editedBitmap)
+                ), triangle.lightAmount), transformMatrix, originalBitmap, editedBitmap)
                 fillDownsideTriangle(
                     Triangle2D(mutableListOf(
                     triangle.vertices[1],
                     secondMiddlePoint,
                     triangle.vertices[2]
-                )), transformMatrix, originalBitmap, editedBitmap)
+                ), triangle.lightAmount), transformMatrix, originalBitmap, editedBitmap)
             }
             else {
                 fillUpsideTriangle(
@@ -360,13 +358,13 @@ class DrawThread() : Thread() {
                     triangle.vertices[0],
                     secondMiddlePoint,
                     triangle.vertices[1]
-                )), transformMatrix, originalBitmap, editedBitmap)
+                ), triangle.lightAmount), transformMatrix, originalBitmap, editedBitmap)
                 fillDownsideTriangle(
                     Triangle2D(mutableListOf(
                     secondMiddlePoint,
                     triangle.vertices[1],
                     triangle.vertices[2]
-                )), transformMatrix, originalBitmap, editedBitmap)
+                ), triangle.lightAmount), transformMatrix, originalBitmap, editedBitmap)
             }
         }
 
@@ -484,7 +482,7 @@ class DrawThread() : Thread() {
             if (dotProduct(normal, triangleToProject.vertices[0]) < 0F) {
 
                 // Instancing new triangle to project
-                var projectedTriangle = Triangle2D()
+                val projectedTriangle = Triangle2D()
 
                 // Calculating shadowing
                 lightDirection.scaleByDivision(lightDirection.getVectorLength())
@@ -498,7 +496,6 @@ class DrawThread() : Thread() {
 
                 // Applying scaling and centering for better view
                 projectedTriangle.scale(shapeScale)
-                projectedTriangle.center(width, height)
                 trianglesToDraw.add(projectedTriangle)
             }
         }
@@ -509,22 +506,28 @@ class DrawThread() : Thread() {
 
     private fun renderTriangles(canvas: Canvas) {
         for (triangleInd in trianglesToDraw.size - 1 downTo 0) {
-            drawTriangle(trianglesToDraw[triangleInd],
+
+            val newTriangle = trianglesToDraw[triangleInd].getScaledLightCopy(2)
+            newTriangle.center(width, height)
+
+            drawTriangle(newTriangle,
                 Color.valueOf(
-                    trianglesToDraw[triangleInd].lightAmount,
-                    trianglesToDraw[triangleInd].lightAmount,
-                    trianglesToDraw[triangleInd].lightAmount),
+                    newTriangle.lightAmount,
+                    newTriangle.lightAmount,
+                    newTriangle.lightAmount),
                 canvas)
         }
     }
 
     private fun drawImages(canvas: Canvas, chosenImages: List<Int>, squared: Boolean = false) {
 
-        val newBitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
+        val newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
         for (triangle in trianglesToDraw) {
 
             val bitmap: Bitmap
+
+            triangle.center(width, height)
 
             if (squared) {
                 if (triangle.imageId % 2 == 0) {
@@ -534,6 +537,7 @@ class DrawThread() : Thread() {
                 else {
                     bitmap = BitmapFactory.decodeResource(resources, chosenImages[(triangle.imageId - 1) / 2])
                     triangleToDemonstrate.setToProjectImageBottom(bitmap)
+                    val ar = intArrayOf()
                 }
             }
             else {
@@ -546,11 +550,10 @@ class DrawThread() : Thread() {
             val invertedMatrix = origTriMatrix.getInvertedMatrix()
 
             val affineTransformMatrix = matrixMultiply(transformedTriMatrix, invertedMatrix).getInvertedMatrix()
-
             fillTriangleIntoBitmap(triangle, affineTransformMatrix, bitmap, newBitmap)
         }
 
-        canvas.drawBitmap(Bitmap.createScaledBitmap(newBitmap, canvas.width * 2, canvas.height * 2, false), -canvas.width.toFloat() / 2, -canvas.height.toFloat() / 2, paint)
+        canvas.drawBitmap(Bitmap.createScaledBitmap(newBitmap, width * 2, height * 2, false), -width.toFloat() / 2, -height.toFloat() / 2, paint)
     }
 
     // For touch handling
@@ -589,7 +592,7 @@ class DrawThread() : Thread() {
             }
             2 -> {
                 currentScale = hypotenuse(event.getX(0) - event.getX(1), event.getY(0) - event.getY(1))
-                shapeScale = clamp(shapeScale + (currentScale - lastScale), 100F, 1700F)
+                shapeScale = clamp(shapeScale + (currentScale - lastScale), 100F, 800F)
 
                 lastScale = currentScale
 
@@ -597,6 +600,12 @@ class DrawThread() : Thread() {
 
                 shapeRotation.z -= tanBetweenTwoLines(currentZRotationVector, lastZRotationVector)
                 lastZRotationVector.copyPointsFrom(currentZRotationVector)
+            }
+            5 -> {
+                secretActivated = true
+            }
+            10 -> {
+                secretActivated = false
             }
         }
     }
