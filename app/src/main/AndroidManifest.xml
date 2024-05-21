@@ -22,7 +22,8 @@
             android:screenOrientation="portrait"
             android:exported="false"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".ImageActivity"/>
+        <activity android:name=".ImageActivity"
+            android:screenOrientation="portrait" />
         <provider
             android:authorities="com.tsu.vkkfilteringapp.fileprovider"
             android:name="androidx.core.content.FileProvider"

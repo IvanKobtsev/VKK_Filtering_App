@@ -17,6 +17,7 @@ import androidx.core.graphics.alpha
 import com.google.gson.Gson
 import com.tsu.vkkfilteringapp.MainActivity
 import com.tsu.vkkfilteringapp.R
+import com.tsu.vkkfilteringapp.filters.AffineTransformation
 import com.tsu.vkkfilteringapp.graphics2d.Point2D
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import com.tsu.vkkfilteringapp.graphics3d.Line3D
@@ -43,7 +44,6 @@ class DrawThread() : Thread() {
     private var surfaceHolder: SurfaceHolder? = null
     private var resources: Resources? = null
 
-    // Temporary !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private val height = 2000
     private val width = 1080
 
@@ -52,8 +52,9 @@ class DrawThread() : Thread() {
     var chosenShape = 1
 
     // Technical stuff
-    private val paint: Paint = Paint()
+    private val paint = Paint()
     private val gson = Gson()
+    private val affineTransformation = AffineTransformation.newInstance()
 
     // FOV-related
     private var fovNear = 0.1F
@@ -243,14 +244,6 @@ class DrawThread() : Thread() {
         return gson.fromJson(jsonString, Mesh::class.java)
     }
 
-    private fun clamp(value: Float, min: Float, max: Float) : Float {
-        return max(min(value, max), min)
-    }
-
-    private fun clamp(value: Int, min: Int, max: Int) : Int {
-        return max(min(value, max), min)
-    }
-
     // Painting functions
 
     private fun fillUpsideTriangle(triangle: Triangle2D, transformMatrix: Matrix3x3, bitmap: Bitmap, editedBitmap: Bitmap) {
@@ -270,8 +263,8 @@ class DrawThread() : Thread() {
 
             while (currentPoint.x < rightBorder) {
 
-                editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
-                    clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
+                editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(affineTransformation.clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
+                    affineTransformation.clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
 
                 ++currentPoint.x
             }
@@ -302,8 +295,8 @@ class DrawThread() : Thread() {
 
             while (currentPoint.x < rightBorder) {
 
-                editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
-                    clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
+                editedBitmap.setPixel(currentPoint.x.toInt(), currentPoint.y.toInt(), bitmap.getPixel(affineTransformation.clamp(currentPoint.getTransformedX(transformMatrix).toInt(), 0, maxWidth),
+                    affineTransformation.clamp(currentPoint.getTransformedY(transformMatrix).toInt(), 0, maxHeight)))
 
                 ++currentPoint.x
             }
@@ -423,23 +416,6 @@ class DrawThread() : Thread() {
         rotationZMatrix.rows[1][1] = cos(shapeRotation.z)
     }
 
-    // Other matrix operations ------------------------------------------------------------
-
-    private fun matrixMultiply(firstMatrix: Matrix3x3, secondMatrix: Matrix3x3) : Matrix3x3 {
-
-        var resultMatrix = Matrix3x3()
-
-        for (yi in 0..2) {
-            for (xi in 0..2) {
-                for (i in 0..2) {
-                    resultMatrix.rows[yi][xi] += firstMatrix.rows[yi][i] * secondMatrix.rows[i][xi]
-                }
-            }
-        }
-
-        return resultMatrix
-    }
-
     // Draw functions ---------------------------------------------------------------------
     private fun drawTriangle(triangle: Triangle2D, triangleColor: Color, canvas: Canvas) {
 
@@ -545,11 +521,8 @@ class DrawThread() : Thread() {
                 triangleToDemonstrate.setToProjectWholeImage(bitmap)
             }
 
-            val origTriMatrix = Matrix3x3(triangleToDemonstrate)
-            val transformedTriMatrix = Matrix3x3(triangle)
-            val invertedMatrix = origTriMatrix.getInvertedMatrix()
+            val affineTransformMatrix = affineTransformation.getTranformationMatrixByTriangles(triangleToDemonstrate, triangle).getInvertedMatrix()
 
-            val affineTransformMatrix = matrixMultiply(transformedTriMatrix, invertedMatrix).getInvertedMatrix()
             fillTriangleIntoBitmap(triangle, affineTransformMatrix, bitmap, newBitmap)
         }
 
@@ -592,7 +565,7 @@ class DrawThread() : Thread() {
             }
             2 -> {
                 currentScale = hypotenuse(event.getX(0) - event.getX(1), event.getY(0) - event.getY(1))
-                shapeScale = clamp(shapeScale + (currentScale - lastScale), 100F, 800F)
+                shapeScale = affineTransformation.clamp(shapeScale + (currentScale - lastScale), 100F, 800F)
 
                 lastScale = currentScale
 

@@ -27,6 +27,11 @@ class Point2D(var x: Float = 0F, var y: Float = 0F) {
         return x * transformMatrix.rows[1][0] + y * transformMatrix.rows[1][1] + transformMatrix.rows[1][2]
     }
 
+    fun getTransformedPoint(transformMatrix: Matrix3x3) : Point2D {
+        return Point2D(x * transformMatrix.rows[0][0] + y * transformMatrix.rows[0][1] + transformMatrix.rows[0][2],
+                x * transformMatrix.rows[1][0] + y * transformMatrix.rows[1][1] + transformMatrix.rows[1][2])
+    }
+
     fun magnitude() : Float {
         return sqrt( x.pow(2) + y.pow(2))
     }
@@ -39,5 +44,9 @@ class Point2D(var x: Float = 0F, var y: Float = 0F) {
     fun copyPointsFrom(pointToCopy: Point2D) {
         x = pointToCopy.x
         y = pointToCopy.y
+    }
+
+    fun copy() : Point2D {
+        return Point2D(x, y)
     }
 }

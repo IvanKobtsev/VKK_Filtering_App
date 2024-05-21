@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var animFadeOut: Animation
     private lateinit var animAppear: Animation
     private lateinit var animDisappear: Animation
+    private lateinit var buttons: List<Button>
 
 
     init {
@@ -55,6 +56,9 @@ class MainActivity : AppCompatActivity() {
         animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
         animAppear = AnimationUtils.loadAnimation(this, R.anim.appear)
+
+        // Buttons
+        buttons = listOf(binding.imageEditorOpener, binding.splineEditorOpener, binding.tDCubeOpener)
 
         // Event listeners
         binding.tDCubeOpener.setOnClickListener {
@@ -89,6 +93,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             mediaPlayer.start()
+
+            binding.overlay.startAnimation(animAppear)
+            Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
+            overlayAnimTimer.start()
         }
 
         registerPermission()
@@ -104,31 +112,25 @@ class MainActivity : AppCompatActivity() {
 
         override fun onFinish() {
             binding.overlay.startAnimation(animFadeOut)
+
+            for (button in buttons) {
+                button.isEnabled = true
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        binding.overlay.startAnimation(animAppear)
-        Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
-        overlayAnimTimer.start()
+        for (button in buttons) {
+            button.isEnabled = false
+        }
     }
 
     private fun registerPermission() {
 
         permissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-//                if (it) {
-//                    Log.i("Permission: ", "Granted")
-//                    Toast.makeText(this, "Camera work", Toast.LENGTH_LONG).show()
-//                    //Log.d("start","when start")
-//                } else {
-//                    Log.i("Permission: ", "Denied")
-//                    Toast.makeText(this, "Camera not work", Toast.LENGTH_LONG).show()
-//                    //requestPermission()
-//                }
-            }
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
     }
 
     private fun requestPermission() {
@@ -146,7 +148,7 @@ class MainActivity : AppCompatActivity() {
             ) -> {
                 Toast.makeText(
                     this,
-                    "We need your permission to use the camera",
+                    "Нам необходимо разрешение, чтобы вы могли загружать отснятые фото напрямую в редактор",
                     Toast.LENGTH_LONG
                 ).show()
             }

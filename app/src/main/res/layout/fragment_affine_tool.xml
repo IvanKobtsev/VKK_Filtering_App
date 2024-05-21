@@ -3,66 +3,111 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:paddingHorizontal="10dp"
     tools:context=".AffineToolFragment">
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/affineButtonOrigTri1"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="1A" />
+            android:background="@drawable/affine_orig_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="1A"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineButtonOrigTri2"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="1B" />
+            android:background="@drawable/affine_orig_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="1B"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineButtonOrigTri3"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="1C" />
+            android:background="@drawable/affine_orig_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="1C"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineButtonTransTri1"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="2A" />
+            android:background="@drawable/affine_trans_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="2A"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineButtonTransTri2"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="2B" />
+            android:background="@drawable/affine_trans_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="2B"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineButtonTransTri3"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="2C" />
+            android:background="@drawable/affine_trans_vertex_background_transition"
+            android:fontFamily="@font/tektur_semibold"
+            android:text="2C"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
         <Button
             android:id="@+id/affineApply"
-            android:layout_width="60dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="100dp"
             android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:contentDescription="@string/apply" />
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:alpha="0.4"
+            android:background="@drawable/icon_apply_button"
+            android:text="@string/apply"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:fontFamily="@font/tektur_medium"
+            android:textColor="@color/MainFontColor" />
     </LinearLayout>
 </HorizontalScrollView>

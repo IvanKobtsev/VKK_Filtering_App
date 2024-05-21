@@ -53,23 +53,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.tsu.vkkfilteringapp.ImageViewMotionOverride
         android:id="@+id/imageToEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="@color/white"
         android:contentDescription="@string/processed_photo"
         android:elevation="5dp"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/toolProps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_max="500dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topBar"
         app:layout_constraintWidth_max="370dp"
-        app:srcCompat="@drawable/background_screensaver_two_fish" />
+        app:srcCompat="@drawable/pick_photo_warning_screen" />
 
     <RelativeLayout
         android:id="@+id/toolProps"
@@ -87,7 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:elevation="5dp"
+        android:elevation="10dp"
+        android:paddingHorizontal="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -106,10 +108,11 @@
             <Button
                 android:id="@+id/rotationTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
-                android:background="@drawable/icon_rotation"
+                android:background="@drawable/background_transition_rotation_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/rotation"
                 android:textColor="@color/toolsLabelText" />
@@ -117,10 +120,11 @@
             <Button
                 android:id="@+id/filtersTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
-                android:background="@drawable/icon_filters"
+                android:background="@drawable/background_transition_filters_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/filters"
                 android:textColor="@color/toolsLabelText" />
@@ -128,9 +132,11 @@
             <Button
                 android:id="@+id/scalingTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
+                android:background="@drawable/background_transition_scaling_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/scaling"
                 android:textColor="@color/toolsLabelText" />
@@ -138,9 +144,11 @@
             <Button
                 android:id="@+id/faceRecognitionTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
+                android:background="@drawable/background_transition_faces_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/face_recognition"
                 android:textColor="@color/toolsLabelText" />
@@ -148,9 +156,11 @@
             <Button
                 android:id="@+id/retouchTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
+                android:background="@drawable/background_transition_retouch_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/retouch"
                 android:textColor="@color/toolsLabelText" />
@@ -158,9 +168,11 @@
             <Button
                 android:id="@+id/maskingTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
+                android:background="@drawable/background_transition_masking_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/masking"
                 android:textColor="@color/toolsLabelText" />
@@ -168,9 +180,11 @@
             <Button
                 android:id="@+id/affineTransformTool"
                 style="?android:attr/buttonBarButtonStyle"
+                android:paddingHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.8"
+                android:background="@drawable/background_transition_affine_tool"
                 android:fontFamily="@font/tektur_medium"
                 android:text="@string/affine_transform"
                 android:textColor="@color/toolsLabelText" />

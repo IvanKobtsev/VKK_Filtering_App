@@ -16,6 +16,7 @@ import java.util.TimerTask
 class FastRenderingView(context: Context, attributeSet: AttributeSet) : SurfaceView(context, attributeSet), SurfaceHolder.Callback {
     private var drawThread: DrawThread? = null
     private var drawBlank = false
+    var canTouch = false
 
     fun init(showImages: Boolean) {
         holder.addCallback(this)
@@ -158,24 +159,29 @@ class FastRenderingView(context: Context, attributeSet: AttributeSet) : SurfaceV
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return when (event.action) {
+        if (!canTouch) {
+            return false
+        }
+        else {
+            return when (event.action) {
 
-            MotionEvent.ACTION_DOWN -> {
-                actionDown()
-                true
-            }
+                MotionEvent.ACTION_DOWN -> {
+                    actionDown()
+                    true
+                }
 
-            MotionEvent.ACTION_MOVE -> {
-                drawThread!!.actionMove(event)
-                true
+                MotionEvent.ACTION_MOVE -> {
+                    drawThread!!.actionMove(event)
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    drawThread!!.cancelTouchEvents(event)
+                    drawThread!!.lastTouchCount = 0
+                    shapeRotationStarter.start()
+                    true
+                }
+                else -> false
             }
-            MotionEvent.ACTION_UP -> {
-                drawThread!!.cancelTouchEvents(event)
-                drawThread!!.lastTouchCount = 0
-                shapeRotationStarter.start()
-                true
-            }
-            else -> false
         }
     }
 

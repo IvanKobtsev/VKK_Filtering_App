@@ -25,4 +25,5 @@
     <string name="takePhoto">Сделать снимок</string>
     <string name="fromGallery">Из галереи</string>
     <string name="apply">Применить</string>
+    <string name="fileName">Или оставьте пустым</string>
 </resources>
