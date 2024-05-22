@@ -25,4 +25,6 @@
     <string name="takePhoto">Сделать снимок</string>
     <string name="fromGallery">Из галереи</string>
     <string name="apply">Применить</string>
+    <string name="close">close</string>
+    <string name="update_spline">update</string>
 </resources>
