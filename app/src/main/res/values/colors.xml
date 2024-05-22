@@ -13,4 +13,11 @@
     <color name="CubeBGColor">#0E85F8</color>
     <color name="CubeBGColorSecond">#05228a</color>
     <color name="toolsLabelText">#000000</color>
+    <color name="transparentBG">#1A606060</color>
+    <color name="transparent">#00000000</color>
+    <color name="pseudoTransparentBG">#E8E8E8</color>
+    <color name="affineOrigTri">#CCFF0000</color>
+    <color name="affineOrigTriTransparent">#80FF0000</color>
+    <color name="affineTransTri">#CC0000FF</color>
+    <color name="affineTransTriTransparent">#800000FF</color>
 </resources>

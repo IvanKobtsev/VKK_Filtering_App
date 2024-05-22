@@ -78,6 +78,10 @@ class TDCubeRenderer : AppCompatActivity() {
             }
 
             mediaPlayer.start()
+
+            binding.overlay.startAnimation(animAppear)
+            Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
+            overlayAnimTimer.start()
         }
     }
 
@@ -101,14 +105,13 @@ class TDCubeRenderer : AppCompatActivity() {
 
         override fun onFinish() {
             binding.overlay.startAnimation(animFadeOut)
+            binding.fastRenderingView.canTouch = true
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        binding.overlay.startAnimation(animAppear)
-        Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
-        overlayAnimTimer.start()
+        binding.fastRenderingView.canTouch = false
     }
 }
