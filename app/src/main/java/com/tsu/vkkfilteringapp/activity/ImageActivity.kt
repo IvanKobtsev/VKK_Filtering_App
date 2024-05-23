@@ -24,6 +24,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.tsu.vkkfilteringapp.databinding.ActivityImageBinding
 import com.tsu.vkkfilteringapp.filters.AffineTransformation
 import com.tsu.vkkfilteringapp.filters.UnsharpMasking
+import com.tsu.vkkfilteringapp.fragments.AffineToolFragment
+import com.tsu.vkkfilteringapp.fragments.FacesToolFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -83,7 +85,8 @@ class ImageActivity : AppCompatActivity() {
         // Fragments setting
         affineFragment = AffineToolFragment.newInstance()
 
-        fragments = listOf(FacesToolFragment.newInstance(),
+        fragments = listOf(
+            FacesToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
