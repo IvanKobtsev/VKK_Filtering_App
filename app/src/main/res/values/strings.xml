@@ -29,7 +29,6 @@
     <string name="accept_deletion">Вы точно хотите удалить картинку?</string>
     <string name="accept_exit">Вы точно хотите выйти?</string>
     <string name="there_is_no_autosave">Ваши изменения не сохраняются автоматически!</string>
-    <string name="fileName">Или оставьте пустым</string>
     <string name="delete">Удалить</string>
     <string name="leave">Оставить</string>
     <string name="transparentBG">Прозрачный фон</string>
@@ -38,8 +37,12 @@
     <string name="exit">Выйти</string>
     <string name="close">close</string>
     <string name="update_spline">update</string>
-    <string name="fileName">Или оставьте пустым</string>
-    
+    <string name="file_name">Или оставьте пустым</string>
+    <string name="enter_file_name">Введите имя вашего файла</string>
+    <string name="now_image_is_in_gallery">Теперь ваша картинка в галерее!</string>
+    <string name="done">Готово</string>
+    <string name="didnt_upload_image">Вы не загрузили картинку!</string>
+    <string name="apply_changes_first">Сначала примените изменения!</string>
     <string name="new_name">Tutorial</string>
     <string-array name="spline">
         <item>Close-B-Spline</item>

@@ -35,14 +35,19 @@ class PhotoPickerSheet : BottomSheetDialogFragment() {
 
         binding.cameraPick.setOnClickListener {
             ImageProvider(activity).getImage(ImageSource.CAMERA){ bitmap ->
-                taskViewModel.image.value = bitmap
+                if (bitmap != null) {
+                    taskViewModel.image.value = bitmap
+                }
             }
             dismiss()
         }
 
         binding.galleryPick.setOnClickListener {
             ImageProvider(activity).getImage(ImageSource.GALLERY){ bitmap ->
-                taskViewModel.image.value = bitmap
+                if (bitmap != null) {
+                    taskViewModel.image.value = bitmap
+                }
+
             }
             dismiss()
         }

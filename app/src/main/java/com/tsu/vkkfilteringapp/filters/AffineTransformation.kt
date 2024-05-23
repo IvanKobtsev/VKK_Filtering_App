@@ -3,13 +3,17 @@ package com.tsu.vkkfilteringapp.filters
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
+import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
+import androidx.core.graphics.get
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.graphics.set
+import com.tsu.vkkfilteringapp.TaskViewModel
 import com.tsu.vkkfilteringapp.graphics2d.Point2D
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import com.tsu.vkkfilteringapp.matrices.Matrix3x3
+import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -18,9 +22,9 @@ import kotlin.math.sqrt
 
 class AffineTransformation {
 
-    fun transformBitmapByTriangles(bitmap: Bitmap, origTriangle: Triangle2D, transTriangle: Triangle2D) : Bitmap {
+    fun transformBitmapByTriangles(bitmap: Bitmap, taskViewModel: TaskViewModel) : Bitmap {
 
-        val transformationMatrix = getTranformationMatrixByTriangles(origTriangle, transTriangle)
+        val transformationMatrix = getTransformationMatrixByTriangles(taskViewModel.affineToolOrigTriangle, taskViewModel.affineToolTransTriangle)
         transformationMatrix.rows[0][2] = 0F
         transformationMatrix.rows[1][2] = 0F
 
@@ -103,15 +107,7 @@ class AffineTransformation {
             // Use bilinear
             for (yi in 0..<newBitmapHeight.toInt()) {
                 for (xi in 0..<newBitmapWidth.toInt()) {
-                    currentPoint = Point2D(xi.toFloat(), yi.toFloat())
-                    currentPoint.translate(topLeftCorner.x, topLeftCorner.y)
-//                    transparency = if (currentPoint.x > resultingImageBorders[0] && currentPoint.x < resultingImageBorders[1]
-//                        && currentPoint.y > resultingImageBorders[2] && currentPoint.y < resultingImageBorders[3]) {
-//                        255
-//                    } else {
-//                        120
-//                    }
-
+                    currentPoint = Point2D(xi.toFloat() + topLeftCorner.x, yi.toFloat() + topLeftCorner.y)
                     currentPoint.transformByMatrix(affineMatrix)
 
                     if (currentPoint.x > 0 && currentPoint.x < bitmap.width - 1
@@ -124,30 +120,23 @@ class AffineTransformation {
                 }
             }
 
+            taskViewModel.affineToolCroppedImageBorders = getResultingImageBorders(bitmap, newBitmap)
+
             return newBitmap
         }
         return bitmap
     }
 
-    // val resultingImageBorders = getResultingImageBorders(newBitmapWidth, newBitmapHeight, bitmap.width.toFloat(), bitmap.height.toFloat(), affineMatrix, topLeftCorner)
-    private fun getResultingImageBorders(newWidth: Float, newHeight: Float, origWidth: Float, origHeight: Float, transformation: Matrix3x3, topLeftCorner: Point2D) : List<Float> {
+    private fun getResultingImageBorders(origBitmap: Bitmap, newBitmap: Bitmap) : List<Float> {
 
-        val center = Point2D(newWidth / 2, newHeight / 2)
+        val center = Point2D(newBitmap.width / 2F, newBitmap.height / 2F)
         val corners = listOf(center.copy(), center.copy(), center.copy(), center.copy())
-
-        for (ci in 0..3) {
-            corners[ci].translate(topLeftCorner.x, topLeftCorner.y)
-        }
-
-        val transformedCorners = mutableListOf(center, center, center, center)
-        val delta = origHeight / origWidth
+        val delta = origBitmap.height.toFloat() / origBitmap.width.toFloat()
 
         var inBounds = true
         while (inBounds) {
             for (ci in 0..3) {
-                transformedCorners[ci] = corners[ci].getTransformedPoint(transformation)
-                if (!(transformedCorners[ci].x > 0 && transformedCorners[ci].x < origWidth
-                    && transformedCorners[ci].y > 0 && transformedCorners[ci].y < origHeight)) {
+                if (newBitmap.getPixel(corners[ci].x.toInt(), corners[ci].y.toInt()).alpha == 0) {
                     inBounds = false
                 }
             }
@@ -162,7 +151,11 @@ class AffineTransformation {
             corners[3].y += delta
         }
 
-        return listOf(corners[0].x, corners[3].x, corners[0].y, corners[3].y)
+        return listOf(
+            min(abs(corners[0].x), abs(corners[3].x)) + 1F,
+            max(abs(corners[0].x), abs(corners[3].x)) - 1F,
+            min(abs(corners[0].y), abs(corners[3].y)) + 1F,
+            max(abs(corners[0].y), abs(corners[3].y)) - 1F)
 
     }
 
@@ -185,7 +178,8 @@ class AffineTransformation {
 
     private fun getLinearInterpolatedColor(color1: Int, color2: Int, interpolation: Float) : Int {
 
-        return Color.rgb((color1.red + (color2.red - color1.red) * interpolation).toInt(),
+        return Color.argb((color1.alpha + (color2.alpha - color1.alpha) * interpolation).toInt(),
+            (color1.red + (color2.red - color1.red) * interpolation).toInt(),
             (color1.green + (color2.green - color1.green) * interpolation).toInt(),
             (color1.blue + (color2.blue - color1.blue) * interpolation).toInt())
     }
@@ -213,12 +207,43 @@ class AffineTransformation {
         return resultMatrix
     }
 
-    fun getTranformationMatrixByTriangles(origTriangle: Triangle2D, transTriangle: Triangle2D) : Matrix3x3 {
+    fun getTransformationMatrixByTriangles(origTriangle: Triangle2D, transTriangle: Triangle2D) : Matrix3x3 {
         return matrixMultiply(Matrix3x3(transTriangle), Matrix3x3(origTriangle).getInvertedMatrix())
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = AffineTransformation()
+    fun getCropDemo(bitmap: Bitmap, taskViewModel: TaskViewModel) : Bitmap {
+
+        val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        var currentPixel: Color
+        for (yi in 0..<newBitmap.height) {
+            for (xi in 0..<newBitmap.width) {
+                if (!(yi > taskViewModel.affineToolCroppedImageBorders[2] && yi < taskViewModel.affineToolCroppedImageBorders[3] &&
+                    xi > taskViewModel.affineToolCroppedImageBorders[0] && xi < taskViewModel.affineToolCroppedImageBorders[1])) {
+
+                    currentPixel = Color.valueOf(bitmap.getPixel(xi, yi))
+                    newBitmap.setPixel(xi, yi, Color.argb(0.5F, currentPixel.red() / 5, currentPixel.green() / 5, currentPixel.blue() / 5))
+                }
+            }
+        }
+
+        return newBitmap
+    }
+
+    fun getCroppedImage(bitmap: Bitmap, taskViewModel: TaskViewModel) : Bitmap {
+
+        val newBitmap = Bitmap.createBitmap((taskViewModel.affineToolCroppedImageBorders[1] - taskViewModel.affineToolCroppedImageBorders[0]).toInt(),
+            (taskViewModel.affineToolCroppedImageBorders[3] - taskViewModel.affineToolCroppedImageBorders[2]).toInt(), Bitmap.Config.ARGB_8888)
+
+        for (yi in 0..<newBitmap.height) {
+            for (xi in 0..<newBitmap.width) {
+                newBitmap.setPixel(xi, yi, bitmap.getPixel(
+                    (taskViewModel.affineToolCroppedImageBorders[0] + xi).toInt(),
+                    (taskViewModel.affineToolCroppedImageBorders[2] + yi).toInt()
+                ))
+            }
+        }
+
+        return newBitmap
     }
 }

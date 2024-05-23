@@ -24,8 +24,8 @@ class ImageViewMotionOverride(context: Context, attributeSet: AttributeSet) : an
     private val paint = Paint()
     private val basePaint = Paint()
     private val letters = listOf("A", "B", "C")
-    private val origTriangleColor = Color.argb(1F, 1F, 0F, 0F)
-    private val transTriangleColor = Color.argb(1F, 0F, 0F, 1F)
+    private val origTriangleColor = Color.argb(0.7F, 1F, 0F, 0F)
+    private val transTriangleColor = Color.argb(0.7F, 0F, 0F, 1F)
     private val vertexRadius = 120F
 
     fun init(view: ViewModelStoreOwner, assets: AssetManager) {
@@ -56,12 +56,10 @@ class ImageViewMotionOverride(context: Context, attributeSet: AttributeSet) : an
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-//        canvas.drawLine(0F, 0F, width.toFloat(), 0F, basePaint)
-//        canvas.drawLine(0F, 0F, 0F, height.toFloat(), basePaint)
-//        canvas.drawLine(width.toFloat(), height.toFloat(), width.toFloat(), 0F, basePaint)
-//        canvas.drawLine(width.toFloat(), height.toFloat(), 0F, height.toFloat(), basePaint)
 
-        if (this::taskViewModel.isInitialized) {
+
+        if (this::taskViewModel.isInitialized && taskViewModel.canDrawOnImageView) {
+
             when (taskViewModel.selectedTool) {
                 0 -> {
 
