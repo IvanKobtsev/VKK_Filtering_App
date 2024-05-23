@@ -22,7 +22,7 @@
             android:screenOrientation="portrait"
             android:exported="false"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".activity.ImageActivity"
+        <activity android:name=".ImageActivity"
             android:screenOrientation="portrait"
             android:exported="false"
             tools:ignore="LockedOrientationActivity" />

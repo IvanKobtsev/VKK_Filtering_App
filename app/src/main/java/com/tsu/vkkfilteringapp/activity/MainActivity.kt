@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.tsu.vkkfilteringapp.ImageActivity
 import com.tsu.vkkfilteringapp.R
 import com.tsu.vkkfilteringapp.TDCubeRenderer
 import com.tsu.vkkfilteringapp.databinding.ActivityMainBinding
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Loading animation
+        // Loading animations
         animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
         animAppear = AnimationUtils.loadAnimation(this, R.anim.appear)

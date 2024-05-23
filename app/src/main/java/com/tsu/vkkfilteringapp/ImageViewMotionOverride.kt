@@ -61,48 +61,50 @@ class ImageViewMotionOverride(context: Context, attributeSet: AttributeSet) : an
 //        canvas.drawLine(width.toFloat(), height.toFloat(), width.toFloat(), 0F, basePaint)
 //        canvas.drawLine(width.toFloat(), height.toFloat(), 0F, height.toFloat(), basePaint)
 
-        when (taskViewModel.selectedTool) {
-            0 -> {
+        if (this::taskViewModel.isInitialized) {
+            when (taskViewModel.selectedTool) {
+                0 -> {
 
-            }
-            6 -> {
-
-                if (taskViewModel.affineToolCanApply.value!!) {
-                    paint.apply {
-                        color = origTriangleColor
-                        strokeWidth = vertexRadius / 4
-                    }
-                    drawTriangleOutline(canvas, taskViewModel.affineToolOrigTriangle)
                 }
+                6 -> {
 
-                paint.strokeWidth = vertexRadius
-                for (vi in 0..2) {
-                    if (taskViewModel.affineToolOrigTriangle.vertices[vi].x != 0F && taskViewModel.affineToolOrigTriangle.vertices[vi].y != 0F) {
-                        paint.color = origTriangleColor
-                        canvas.drawPoint(taskViewModel.affineToolOrigTriangle.vertices[vi].x, taskViewModel.affineToolOrigTriangle.vertices[vi].y, paint)
-                        paint.color = Color.WHITE
-                        canvas.drawText("1" + letters[vi], taskViewModel.affineToolOrigTriangle.vertices[vi].x, taskViewModel.affineToolOrigTriangle.vertices[vi].y + paint.strokeWidth / 6, paint)
+                    if (taskViewModel.affineToolCanApply.value!!) {
+                        paint.apply {
+                            color = origTriangleColor
+                            strokeWidth = vertexRadius / 4
+                        }
+                        drawTriangleOutline(canvas, taskViewModel.affineToolOrigTriangle)
                     }
-                }
 
-                if (taskViewModel.affineToolCanApply.value!!) {
-                    paint.apply {
-                        color = transTriangleColor
-                        strokeWidth = vertexRadius / 4
+                    paint.strokeWidth = vertexRadius
+                    for (vi in 0..2) {
+                        if (taskViewModel.affineToolOrigTriangle.vertices[vi].x != 0F && taskViewModel.affineToolOrigTriangle.vertices[vi].y != 0F) {
+                            paint.color = origTriangleColor
+                            canvas.drawPoint(taskViewModel.affineToolOrigTriangle.vertices[vi].x, taskViewModel.affineToolOrigTriangle.vertices[vi].y, paint)
+                            paint.color = Color.WHITE
+                            canvas.drawText("1" + letters[vi], taskViewModel.affineToolOrigTriangle.vertices[vi].x, taskViewModel.affineToolOrigTriangle.vertices[vi].y + paint.strokeWidth / 6, paint)
+                        }
                     }
-                    drawTriangleOutline(canvas, taskViewModel.affineToolTransTriangle)
-                }
 
-                paint.strokeWidth = vertexRadius
-                for (vi in 0..2) {
-                    if (taskViewModel.affineToolTransTriangle.vertices[vi].x != 0F && taskViewModel.affineToolTransTriangle.vertices[vi].y != 0F) {
-                        paint.color = transTriangleColor
-                        canvas.drawPoint(taskViewModel.affineToolTransTriangle.vertices[vi].x, taskViewModel.affineToolTransTriangle.vertices[vi].y, paint)
-                        paint.color = Color.WHITE
-                        canvas.drawText("2" + letters[vi], taskViewModel.affineToolTransTriangle.vertices[vi].x, taskViewModel.affineToolTransTriangle.vertices[vi].y + paint.strokeWidth / 6, paint)
+                    if (taskViewModel.affineToolCanApply.value!!) {
+                        paint.apply {
+                            color = transTriangleColor
+                            strokeWidth = vertexRadius / 4
+                        }
+                        drawTriangleOutline(canvas, taskViewModel.affineToolTransTriangle)
                     }
-                }
 
+                    paint.strokeWidth = vertexRadius
+                    for (vi in 0..2) {
+                        if (taskViewModel.affineToolTransTriangle.vertices[vi].x != 0F && taskViewModel.affineToolTransTriangle.vertices[vi].y != 0F) {
+                            paint.color = transTriangleColor
+                            canvas.drawPoint(taskViewModel.affineToolTransTriangle.vertices[vi].x, taskViewModel.affineToolTransTriangle.vertices[vi].y, paint)
+                            paint.color = Color.WHITE
+                            canvas.drawText("2" + letters[vi], taskViewModel.affineToolTransTriangle.vertices[vi].x, taskViewModel.affineToolTransTriangle.vertices[vi].y + paint.strokeWidth / 6, paint)
+                        }
+                    }
+
+                }
             }
         }
     }
