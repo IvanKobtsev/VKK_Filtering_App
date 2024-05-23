@@ -19,11 +19,21 @@
     <string name="do_photo">Сфотографировать</string>
     <string name="shapeToShowDefaultLabelText">D6 (куб)</string>
     <string name="background">Background with symbols VKKF on it.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pick_a_photo">Выберите картинку</string>
     <string name="takePhoto">Сделать снимок</string>
     <string name="fromGallery">Из галереи</string>
     <string name="apply">Применить</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отменить</string>
+    <string name="unsaved_changes">У вас есть несохранённые изменения!</string>
+    <string name="accept_deletion">Вы точно хотите удалить картинку?</string>
+    <string name="accept_exit">Вы точно хотите выйти?</string>
+    <string name="there_is_no_autosave">Ваши изменения не сохраняются автоматически!</string>
     <string name="fileName">Или оставьте пустым</string>
+    <string name="delete">Удалить</string>
+    <string name="leave">Оставить</string>
+    <string name="transparentBG">Прозрачный фон</string>
+    <string name="crop">Обрезать</string>
+    <string name="error_too_large_image">Ошибка: данная трансформация образует слишком большую картинку. Попробуйте уменьшить второй треугольник.</string>
+    <string name="exit">Выйти</string>
 </resources>

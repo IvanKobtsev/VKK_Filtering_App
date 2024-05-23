@@ -3,6 +3,7 @@
     <style name="Base.Theme.VKK_Filtering_App" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorAccent">@android:color/holo_green_light</item>
     </style>
 
 <!--    <style name="Theme.VKK_Filtering_App" parent="Base.Theme.VKK_Filtering_App" />-->

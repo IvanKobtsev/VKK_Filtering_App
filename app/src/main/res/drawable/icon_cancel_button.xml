@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="58dp"
+        android:height="58dp"
+        android:left="24.5dp">
+
+        <vector
+            android:width="50dp"
+            android:height="60dp"
+            android:viewportWidth="30"
+            android:viewportHeight="30">
+            <path
+                android:pathData="M2.08,23.922L13.002,13M13.002,13L23.924,2.078M13.002,13L2.08,2.078M13.002,13L23.924,23.922"
+                android:strokeWidth="4.2"
+                android:strokeColor="@color/transparentBG"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"/>
+        </vector>
+
+    </item>
+</layer-list>

@@ -8,11 +8,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,10 +24,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.tsu.vkkfilteringapp.databinding.ActivityImageBinding
 import com.tsu.vkkfilteringapp.filters.AffineTransformation
 import com.tsu.vkkfilteringapp.filters.UnsharpMasking
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -43,6 +47,19 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var affineFragment: AffineToolFragment
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var fragments: List<Fragment>
+    private lateinit var affineSavingFragment: AffineSavingFragment
+
+    private lateinit var animFadeIn: Animation
+    private lateinit var animFadeOut: Animation
+    private lateinit var animAppear: Animation
+    private lateinit var animDisappear: Animation
+
+    // Motion events related
+    private var lastX = 0F
+    private var draggingCount = 0F
+    private var imageViewBasePosition = 0F
+    private var imageViewOriginalPosition = 0F
+    private var askedAlready = false
 
     // Companions
     private var affineTransformation = AffineTransformation.newInstance()
@@ -74,14 +91,19 @@ class ImageActivity : AppCompatActivity() {
         FacesToolFragment.newInstance(),
         affineFragment)
 
+        affineSavingFragment = AffineSavingFragment.newInstance()
+
+        // Loading animation
+        animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+        animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        animAppear = AnimationUtils.loadAnimation(this, R.anim.appear)
+        animDisappear = AnimationUtils.loadAnimation(this, R.anim.disappear)
+
+        binding.progressBarOverlay.startAnimation(animDisappear)
 
         binding.toolProps.y += 500
 
         PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
-
-//        binding.camera.setOnClickListener {
-//            takePhoto(view)
-//        }
 
         binding.maskingTool.setOnClickListener {
             val blur = UnsharpMasking(editedImage, 1.0, 1)
@@ -149,17 +171,13 @@ class ImageActivity : AppCompatActivity() {
         taskViewModel.affineToolNeedToUpdate.observe(this) {
             if (it) {
 
-                // Show loading screen...
+                binding.progressBarOverlay.startAnimation(animFadeIn)
 
-//                val mainJob = CoroutineScope(Dispatchers.IO).launch {
+                GlobalScope.launch(Dispatchers.Main) {
 
-                    newBitmap = affineTransformation.transformBitmapByTriangles(editedImage,
-                        taskViewModel.affineToolOrigTriangle,
-                        taskViewModel.affineToolTransTriangle)
-//                }
-
-                binding.imageToEdit.setImageBitmap(newBitmap)
-
+                    processImage()
+                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, affineSavingFragment).commit()
+                }
             }
         }
 
@@ -179,19 +197,101 @@ class ImageActivity : AppCompatActivity() {
 
                         binding.imageToEdit.invalidate()
                     }
+
+                    imageViewOriginalPosition = binding.imageToEdit.x
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    Log.i("smth", it.x.toString() + "  " + it.y.toString())
+
+                    if (taskViewModel.selectedTool == -1 && taskViewModel.picturePicked) {
+
+                        if (lastX > it.x) {
+                            draggingCount += lastX - it.x
+                            binding.imageToEdit.x -= lastX - it.x
+                        }
+
+                        lastX = it.x
+
+                        if (draggingCount > 200) {
+                            if (taskViewModel.hasUnsavedChanges.value == false) {
+                                deleteImage()
+                            }
+                            else if (!askedAlready) {
+                                askedAlready = true
+                                askToAcceptDialog()
+                            }
+                        }
+
+
+                    }
                 }
 
                 MotionEvent.ACTION_UP -> {
-
+                    binding.imageToEdit.x = imageViewOriginalPosition
                 }
             }
 
         }
 
+    }
+
+    private suspend fun processImage(){
+        val value = GlobalScope.async {
+
+            val result = withContext(Dispatchers.Default) {
+
+                when (taskViewModel.selectedTool) {
+                    0 -> {
+                        // Rotation
+                    }
+                    1 -> {
+                        // Filters
+                    }
+                    2 -> {
+                        // Scaling
+                    }
+                    3 -> {
+                        // Faces
+                    }
+                    4 -> {
+                        // Retouch
+                    }
+                    5 -> {
+                        // Masking
+                    }
+                    6 -> {
+                        newBitmap = affineTransformation.transformBitmapByTriangles(editedImage,
+                            taskViewModel.affineToolOrigTriangle,
+                            taskViewModel.affineToolTransTriangle)
+                    }
+                    else -> {
+                        newBitmap = editedImage
+                    }
+                }
+
+            }
+        }
+        value.await()
+
+        if (newBitmap.width == editedImage.width &&
+            newBitmap.height == editedImage.height) {
+            binding.imageToEdit.alpha = 1F
+            Toast.makeText(this.baseContext, R.string.error_too_large_image, Toast.LENGTH_LONG).show()
+        }
+        else {
+            binding.imageToEdit.alpha = 1F
+            binding.imageToEdit.setImageBitmap(newBitmap)
+        }
+
+        binding.progressBarOverlay.startAnimation(animFadeOut)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (imageViewBasePosition == 0F) {
+            imageViewBasePosition = binding.imageToEdit.x
+        }
     }
 
     private val transitionDuration = 200
@@ -205,13 +305,13 @@ class ImageActivity : AppCompatActivity() {
             else if (taskViewModel.selectedTool != -1) {
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
                 buttonTransitions[newActiveFragment].startTransition(transitionDuration)
-                supportFragmentManager.beginTransaction().replace(R.id.toolProps, fragments[newActiveFragment]).commit()
+                supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[newActiveFragment]).commit()
                 taskViewModel.selectedTool = newActiveFragment
             }
             else {
                 binding.toolProps.y -= 500
                 buttonTransitions[newActiveFragment].startTransition(transitionDuration)
-                supportFragmentManager.beginTransaction().replace(R.id.toolProps, fragments[newActiveFragment]).commit()
+                supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[newActiveFragment]).commit()
                 taskViewModel.selectedTool = newActiveFragment
             }
             binding.imageToEdit.invalidate()
@@ -254,14 +354,14 @@ class ImageActivity : AppCompatActivity() {
         with (builder) {
             setTitle("Введите имя вашего файла")
             setPositiveButton("Готово") { _, _ ->
-                imageName = editText.text.toString()
+//                imageName = editText.text.toString()
                 saveMediaToStorage()
                 Toast.makeText(this.context, "Теперь ваша картинка в галерее!", Toast.LENGTH_SHORT).show()
             }
             setNegativeButton("Отменить") { _, _ ->
                 // Do nothing
             }
-            setView(dialogLayout)
+//            setView(dialogLayout)
             show()
         }
 
@@ -270,14 +370,32 @@ class ImageActivity : AppCompatActivity() {
     private fun callExitDialog() {
         val builder = AlertDialog.Builder(this)
         with (builder) {
-            setMessage("Ваши изменения не сохраняются автоматически!")
-            setTitle("Вы точно хотите выйти?")
-            setPositiveButton("Выйти") { _, _ ->
+            setMessage(R.string.there_is_no_autosave)
+            setTitle(R.string.accept_exit)
+            setPositiveButton(R.string.exit) { _, _ ->
 
                 finish()
             }
-            setNegativeButton("Останусь") { _, _ ->
+            setNegativeButton(R.string.cancel) { _, _ ->
                 // Do nothing
+            }
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun askToAcceptDialog() {
+
+        val builder = AlertDialog.Builder(this)
+        with (builder) {
+            setMessage(R.string.unsaved_changes)
+            setTitle(R.string.accept_deletion)
+            setPositiveButton(R.string.delete) { _, _ ->
+                deleteImage()
+            }
+            setNegativeButton(R.string.leave) { _, _ ->
+                askedAlready = false
             }
         }
 
@@ -326,5 +444,17 @@ class ImageActivity : AppCompatActivity() {
         fos?.use {
             editedImage.compress(Bitmap.CompressFormat.JPEG, 100, it)
         }
+    }
+
+    private fun deleteImage() {
+
+        taskViewModel.hasUnsavedChanges.value = false
+        taskViewModel.picturePicked = false
+        askedAlready = false
+
+        binding.imageToEdit.setImageResource(R.drawable.pick_photo_warning_screen)
+        binding.imageToEdit.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        imageViewOriginalPosition = imageViewBasePosition
     }
 }

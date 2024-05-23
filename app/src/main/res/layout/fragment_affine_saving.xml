@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAlignment="center"
+    tools:context=".AffineToolFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center">
+
+        <RadioGroup
+            android:id="@+id/exportMethods"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/affineSaveButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/cropChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/crop"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/MainFontColor" />
+
+            <RadioButton
+                android:id="@+id/fullChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:checked="true"
+                android:fontFamily="@font/tektur_medium"
+                android:text="@string/transparentBG"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/MainFontColor" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/affineSaveButton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/icon_apply_button"
+
+            android:fontFamily="@font/tektur_medium"
+            android:text="@string/save"
+            android:textAlignment="center"
+            android:textColor="@color/MainFontColor"
+            app:layout_constraintEnd_toStartOf="@+id/affineCancelButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/affineCancelButton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/icon_cancel_button"
+            android:fontFamily="@font/tektur_medium"
+            android:text="@string/cancel"
+            android:textAlignment="center"
+            android:textColor="@color/MainFontColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</HorizontalScrollView>
