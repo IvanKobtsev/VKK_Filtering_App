@@ -36,4 +36,6 @@
     <string name="crop">Обрезать</string>
     <string name="error_too_large_image">Ошибка: данная трансформация образует слишком большую картинку. Попробуйте уменьшить второй треугольник.</string>
     <string name="exit">Выйти</string>
+    <string name="close">close</string>
+    <string name="update_spline">update</string>
 </resources>

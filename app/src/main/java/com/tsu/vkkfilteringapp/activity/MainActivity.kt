@@ -1,26 +1,26 @@
-package com.tsu.vkkfilteringapp
+package com.tsu.vkkfilteringapp.activity
 
 import android.Manifest
 import android.content.Context
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
 import android.os.CountDownTimer
 import android.util.Log
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.tsu.vkkfilteringapp.R
+import com.tsu.vkkfilteringapp.TDCubeRenderer
 import com.tsu.vkkfilteringapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -67,7 +67,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.imageEditorOpener.setOnClickListener{
-            val intent = Intent(this,ImageActivity::class.java)
+            val intent = Intent(this, ImageActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.splineEditorOpener.setOnClickListener{
+            val intent = Intent(this, SplineActivity::class.java)
             startActivity(intent)
         }
 

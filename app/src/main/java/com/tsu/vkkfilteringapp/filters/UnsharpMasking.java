@@ -256,10 +256,14 @@ public class UnsharpMasking {
                 int original = imgArray[i * img.getWidth() + j];
                 int blur =     newImgArray[i * img.getWidth() + j];
                 newImgArray[i * img.getWidth() + j] = Color.rgb(
-                        toRange(255,0,abs((int) (Color.red(original) + amount*(Color.red(original) -Color.red(blur)))))
-                        ,toRange(255,0,abs((int)(Color.green(original) + amount*(Color.green(original) -Color.green(blur)))))
-                        ,toRange(255,0,abs((int)(Color.blue(original) + amount*(Color.blue(original) -Color.blue(blur))))));
-
+                        toRange(255,0,abs((int) ((Color.red(original) + amount*(Color.red(original) -Color.red(blur))))))
+                        ,toRange(255,0,abs((int)((Color.green(original) + amount*(Color.green(original) -Color.green(blur))))))
+                        ,toRange(255,0,abs((int)((Color.blue(original) + amount*(Color.blue(original) -Color.blue(blur)))))));
+                //newImgArray[i * img.getWidth() + j] = Color.rgb(
+                //        abs((int)(Color.red(original) + amount*(Color.red(original) -Color.red(blur)))),
+                //                abs((int)(Color.green(original) + amount*(Color.green(original) -Color.green(blur)))),
+                //                        abs((int)(Color.blue(original) + amount*(Color.blue(original) -Color.blue(blur)))));
+//
             }
         }
     }
