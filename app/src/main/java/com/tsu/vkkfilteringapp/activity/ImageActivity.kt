@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.tsu.vkkfilteringapp.AffineToolFragment
-import com.tsu.vkkfilteringapp.FacesToolFragment
+import com.tsu.vkkfilteringapp.fragments.AffineToolFragment
+import com.tsu.vkkfilteringapp.fragments.FacesToolFragment
 import com.tsu.vkkfilteringapp.PhotoPickerSheet
 import com.tsu.vkkfilteringapp.R
 import com.tsu.vkkfilteringapp.TaskViewModel
