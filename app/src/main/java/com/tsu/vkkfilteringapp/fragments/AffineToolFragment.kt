@@ -1,4 +1,4 @@
-package com.tsu.vkkfilteringapp
+package com.tsu.vkkfilteringapp.fragments
 
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.tsu.vkkfilteringapp.TaskViewModel
 import com.tsu.vkkfilteringapp.databinding.FragmentAffineToolBinding
-import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 
 class AffineToolFragment : Fragment() {
 

@@ -23,9 +23,11 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
     private var imageMemory :LinkedList<Bitmap> = LinkedList<Bitmap>()
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
-    private var coordinateArrayList: ArrayList<ArrayList<Float>> = ArrayList()
 
-    private var operatingModes = 0
+
+    private var coordinateArrayList: ArrayList<ArrayList<Float>> = ArrayList()
+    private var deletePointArrayList :ArrayList<ArrayList<Float>> = ArrayList()
+    private var operatingModes = -1
 
 
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
@@ -66,22 +68,11 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
         startCanvas(canvas)
 
         when(operatingModes){
-            0->{startCanvas(canvas)
+            -1->{startCanvas(canvas)
                 drawPoints(canvas)
                 drawPath(canvas)
             }
-            2->{
-                drawPoints(canvas)
-                createBezierCurve(
-                    canvas,
-                        BezierCurve(coordinateArrayList)
-                )
-            }
-            3-> {
-
-                coordinateArrayList = ArrayList()
-            }
-            4-> {
+            0-> {
                 if (coordinateArrayList.size <= 2) {
                     drawPoints(canvas)
                     drawPath(canvas)
@@ -101,7 +92,14 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
 
                 }
             }
-            5->{
+            1->{
+                drawPoints(canvas)
+                createBezierCurve(
+                    canvas,
+                    BezierCurve(coordinateArrayList)
+                )
+            }
+            2->{
                 drawPoints(canvas)
                 createSpline(canvas,
                     СubicSpline(
@@ -109,9 +107,34 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
                     )
                 )
             }
+            3-> {
+                coordinateArrayList = ArrayList()
+                deletePointArrayList = ArrayList()
+            }
+            4-> {
+                if (coordinateArrayList.size!=0) {
+                    deletePointArrayList.add(coordinateArrayList[coordinateArrayList.size - 1])
+                    coordinateArrayList.removeAt(coordinateArrayList.size - 1)
+                    drawPoints(canvas)
+                    drawPath(canvas)
+                } else {
+                    Toast.makeText(context,"Невозможно удалить точки ):",Toast.LENGTH_LONG).show()
+                }
+            }
+            5->{
+                if (deletePointArrayList.size!=0) {
+                    coordinateArrayList.add(deletePointArrayList[deletePointArrayList.size - 1])
+                    deletePointArrayList.removeAt(deletePointArrayList.size - 1)
 
+                } else {
+                    Toast.makeText(context,"Невозможно удалить точки ):",Toast.LENGTH_LONG).show()
+                }
+                drawPoints(canvas)
+                drawPath(canvas)
+            }
         }
-        operatingModes = 0
+
+        operatingModes = -1
 
 
     }

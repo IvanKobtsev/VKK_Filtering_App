@@ -38,4 +38,12 @@
     <string name="exit">Выйти</string>
     <string name="close">close</string>
     <string name="update_spline">update</string>
+    <string name="fileName">Или оставьте пустым</string>
+    
+    <string name="new_name">Tutorial</string>
+    <string-array name="spline">
+        <item>Close-B-Spline</item>
+        <item>Bezier curve</item>
+        <item>Cubic spline</item>
+    </string-array>
 </resources>

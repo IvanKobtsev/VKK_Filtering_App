@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -61,23 +61,23 @@
         android:backgroundTint="@color/colorButton"
         android:text="@string/update_spline"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/closeSpline"
-        app:layout_constraintHorizontal_bias="0.03"
         app:layout_constraintStart_toEndOf="@+id/forward"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <Button
-        android:id="@+id/closeSpline"
-        android:layout_width="84dp"
-        android:layout_height="41dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/colorButton"
-        android:text="@string/close"
+    <Spinner
+        android:id="@+id/spSpline"
+        android:layout_width="120dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorButton"
+        android:clipToPadding="true"
+        android:outlineSpotShadowColor="@color/white"
+        android:entries="@array/spline"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/start"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.933"
+        app:layout_constraintStart_toEndOf="@+id/update" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
