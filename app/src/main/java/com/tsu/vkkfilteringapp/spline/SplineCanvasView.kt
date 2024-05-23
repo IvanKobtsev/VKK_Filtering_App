@@ -26,7 +26,7 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
 
 
     private var coordinateArrayList: ArrayList<ArrayList<Float>> = ArrayList()
-
+    private var deletePointArrayList :ArrayList<ArrayList<Float>> = ArrayList()
     private var operatingModes = -1
 
 
@@ -109,11 +109,29 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
             }
             3-> {
                 coordinateArrayList = ArrayList()
+                deletePointArrayList = ArrayList()
             }
-            4->{
-
+            4-> {
+                if (coordinateArrayList.size!=0) {
+                    deletePointArrayList.add(coordinateArrayList[coordinateArrayList.size - 1])
+                    coordinateArrayList.removeAt(coordinateArrayList.size - 1)
+                    drawPoints(canvas)
+                    drawPath(canvas)
+                } else {
+                    Toast.makeText(context,"Невозможно удалить точки ):",Toast.LENGTH_LONG).show()
+                }
             }
+            5->{
+                if (deletePointArrayList.size!=0) {
+                    coordinateArrayList.add(deletePointArrayList[deletePointArrayList.size - 1])
+                    deletePointArrayList.removeAt(deletePointArrayList.size - 1)
 
+                } else {
+                    Toast.makeText(context,"Невозможно удалить точки ):",Toast.LENGTH_LONG).show()
+                }
+                drawPoints(canvas)
+                drawPath(canvas)
+            }
         }
 
         operatingModes = -1

@@ -16,9 +16,7 @@ class SplineActivity: AppCompatActivity() {
     private var itemPosition:Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("splineE","13")
         binding = ActivitySplineBinding.inflate(layoutInflater)
-        Log.e("splineE","16")
         setContentView(binding.root)
 
 
@@ -39,6 +37,10 @@ class SplineActivity: AppCompatActivity() {
             }
 
         }
+        binding.forward.setOnClickListener{
+            binding.splineCanvasView.setOperatingModes(5)
+        }
+
         binding.back.setOnClickListener{
             binding.splineCanvasView.setOperatingModes(4)
         }
