@@ -185,101 +185,6 @@ class LightweightFilters {
         return  newImage
     }
 
-    fun filterSobel(img: Bitmap): Bitmap {
-        val newImage = Bitmap.createBitmap(img)
-        val imgArray = IntArray(img.width * img.height)
-        val newImgArray = IntArray(img.width * img.height)
-        img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
-        val core = getSobelMatrix()
-
-        runBlocking {
-            (1 until img.height-1).chunked(4).map { rows ->
-                async(Dispatchers.Default) {
-                    for (i in rows) {
-                        for (j in 1 until img.width-1) {
-                            val iter = i * img.width + j
-                            var red = 0
-                            var green = 0
-                            var blue = 0
-                            for(filterX in i-1 until i+1) {
-                                var localCoreX = 0
-                                for (filterY in j - 1 until j + 1) {
-                                    var localCoreY = 0
-                                    var localIter = filterX * img.width + filterY
-                                    red += Color.red(imgArray[localIter]*core[localCoreX][localCoreY])
-                                    green += Color.green(imgArray[localIter]*core[localCoreX][localCoreY])
-                                    blue += Color.blue(imgArray[localIter]*core[localCoreX][localCoreY])
-
-                                    localCoreY++
-                                }
-                                localCoreX++
-                            }
-                            newImgArray[iter] =
-                                Color.rgb(
-                                    toRange(255, 0,red),
-                                    toRange(255, 0,green),
-                                    toRange(255, 0,blue)
-                                )
-
-                        }
-                    }
-                }
-
-            }.awaitAll()
-        }
-
-        newImage.setPixels(newImgArray,0, img.width, 0, 0, img.width, img.height)
-        return  newImage
-    }
-
-
-    fun filterPrewitt(img: Bitmap): Bitmap {
-        val newImage = Bitmap.createBitmap(img)
-        val imgArray = IntArray(img.width * img.height)
-        val newImgArray = IntArray(img.width * img.height)
-        img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
-        val core = getPrewittMatrix()
-
-        runBlocking {
-            (1 until img.height-1).chunked(4).map { rows ->
-                async(Dispatchers.Default) {
-                    for (i in rows) {
-                        for (j in 1 until img.width-1) {
-                            val iter = i * img.width + j
-                            var red = 0
-                            var green = 0
-                            var blue = 0
-                            for(filterX in i-1 until i+1) {
-                                var localCoreX = 0
-                                for (filterY in j - 1 until j + 1) {
-                                    var localCoreY = 0
-                                    var localIter = filterX * img.width + filterY
-                                    red += Color.red(imgArray[localIter]*core[localCoreX][localCoreY])
-                                    green += Color.green(imgArray[localIter]*core[localCoreX][localCoreY])
-                                    blue += Color.blue(imgArray[localIter]*core[localCoreX][localCoreY])
-
-                                    localCoreY++
-                                }
-                                localCoreX++
-                            }
-                            newImgArray[iter] =
-                                Color.rgb(
-                                    toRange(255, 0,red),
-                                    toRange(255, 0,green),
-                                    toRange(255, 0,blue)
-                                )
-
-                        }
-                    }
-                }
-
-            }.awaitAll()
-        }
-
-        newImage.setPixels(newImgArray,0, img.width, 0, 0, img.width, img.height)
-        return  newImage
-    }
-
     fun commonBlur(img: Bitmap,radius: Int, compromise: Double): Bitmap{
         val newImage = Bitmap.createBitmap(img)
         val imgArray = IntArray(img.width * img.height)
@@ -448,7 +353,6 @@ class LightweightFilters {
         return  newImage
 
     }
-
     fun blurGaussian(img: Bitmap,radius: Int, compromise: Double,sigma: Double): Bitmap {
         val newImage = Bitmap.createBitmap(img)
         val imgArray = IntArray(img.width * img.height)
@@ -549,19 +453,47 @@ class LightweightFilters {
         )
     }
 
-
-    private fun getPrewittMatrix():Array<Array<Int>>{
+    private fun getFirstRobertsMask(): Array<Array<Int>> {
         return arrayOf(
-            arrayOf(-1 ,0, -1),
-            arrayOf(-1 ,0, -1),
-            arrayOf(-1 ,0, -1)
+            arrayOf(-1 ,0),
+            arrayOf(0 , 1),
         )
     }
 
-    private fun getSobelMatrix():Array<Array<Int>>{
+
+    private fun getSecondRobertsMask(): Array<Array<Int>> {
+        return arrayOf(
+            arrayOf(0 ,-1),
+            arrayOf(1 , 0),
+        )
+    }
+    private fun getFirstPrewittMatrix():Array<Array<Int>>{
+        return arrayOf(
+            arrayOf(-1 ,0, 1),
+            arrayOf(-1 ,0, 1),
+            arrayOf(-1 ,0, 1)
+        )
+    }
+
+    private fun getSecondPrewittMatrxi():Array<Array<Int>>{
+        return arrayOf(
+            arrayOf(-1 ,-1, -1),
+            arrayOf( 0 , 0,  0),
+            arrayOf(-1 ,-1, -1)
+        )
+    }
+
+    private fun getFirstSobelMatrix():Array<Array<Int>>{
+        return arrayOf(
+            arrayOf(-1 ,-2, -1),
+            arrayOf(0 ,0, 0),
+            arrayOf(-1 ,-2, -1)
+        )
+    }
+    private fun getSecondSobelMatrix():Array<Array<Int>>{
         return arrayOf(
             arrayOf(-1 ,0, -1),
-            arrayOf(-1 ,0, -1),
+            arrayOf(-2 ,0, -2),
             arrayOf(-1 ,0, -1)
         )
     }
