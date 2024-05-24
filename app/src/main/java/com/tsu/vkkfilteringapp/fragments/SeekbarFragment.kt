@@ -49,7 +49,7 @@ class SeekbarFragment : Fragment() {
 
     }
 
-    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarDataList: MutableList<SeekbarData>, seekbarDataIndex: Int) {
+    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarDataList: List<SeekbarData>, seekbarDataIndex: Int) {
 
         canChangeValue = false
         taskViewModel.textViewToWrite.value = textView
@@ -60,6 +60,21 @@ class SeekbarFragment : Fragment() {
         binding.maxValue.text = seekbarDataList[seekbarDataIndex].getTextMax()
 
         currentSeekbarData = seekbarDataList[seekbarDataIndex]
+        currentLiveDataToEdit = liveDataToEdit
+        canChangeValue = true
+    }
+
+    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarData: SeekbarData) {
+
+        canChangeValue = false
+        taskViewModel.textViewToWrite.value = textView
+        taskViewModel.textViewStringID = stringID
+        binding.seekBar.progress = seekbarData.currentValue
+        binding.seekBar.max = seekbarData.getMax()
+        binding.minValue.text = seekbarData.getTextMin()
+        binding.maxValue.text = seekbarData.getTextMax()
+
+        currentSeekbarData = seekbarData
         currentLiveDataToEdit = liveDataToEdit
         canChangeValue = true
     }

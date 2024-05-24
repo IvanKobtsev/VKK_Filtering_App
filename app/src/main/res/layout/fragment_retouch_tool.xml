@@ -1,9 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.RetouchToolFragment">
 
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/retouchApply"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:alpha="0.5"
+            android:background="@drawable/icon_apply_button"
+            android:enabled="false"
+            android:fontFamily="@font/tektur_medium"
+            android:text="@string/save"
+            android:textAlignment="center"
+            android:textColor="@color/MainFontColor" />
+
+        <Button
+            android:id="@+id/brushRadiusCall"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="125dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:text="@string/retouch_brush_radius"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/intensityCall"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="135dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:text="@string/retouch_intensity"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</HorizontalScrollView>

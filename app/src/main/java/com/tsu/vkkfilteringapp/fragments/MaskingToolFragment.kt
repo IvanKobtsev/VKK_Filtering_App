@@ -3,6 +3,7 @@ package com.tsu.vkkfilteringapp.fragments
 import android.annotation.SuppressLint
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,8 @@ class MaskingToolFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var buttons: List<Button>
+    private var currentSeekBar = -1
+    private val transitionDuration = 300
 
     private val stringIDs = listOf(
         R.string.masking_core_radius,
@@ -28,7 +31,7 @@ class MaskingToolFragment : Fragment() {
     )
 
     // Seekbars
-    var seekbarsData = mutableListOf(
+    private val seekbarsData = listOf(
         SeekbarData(0, 1, 5),
         SeekbarData(0, 1, 20, 10F)
     )
@@ -67,20 +70,40 @@ class MaskingToolFragment : Fragment() {
 
         binding.amountCall.setOnClickListener {
             switchSeekbar(1)
+            switchSeekbar(1)
         }
 
         taskViewModel.maskToolCoreRadiusValue.observe(requireActivity()) {
-            binding.coreRadiusCall.text = it.toString()
+            binding.coreRadiusCall.text = resources.getString(R.string.masking_core_radius, it.toString())
         }
 
         taskViewModel.maskToolAmountValue.observe(requireActivity()) {
-            binding.amountCall.text = it.toString()
+            binding.amountCall.text = resources.getString(R.string.masking_amount, it.toString())
         }
+
+        taskViewModel.seekbarWrapperHide.observe(requireActivity()) {
+            if (it && currentSeekBar != -1) {
+                buttonTransitions[currentSeekBar].reverseTransition(transitionDuration)
+                currentSeekBar = -1
+            }
+        }
+
+        taskViewModel.maskToolCoreRadiusValue.value = seekbarsData[0].getFloatValue()
+        taskViewModel.maskToolAmountValue.value = seekbarsData[1].getFloatValue()
+
+        currentSeekBar = -1
     }
 
     private fun switchSeekbar(seekbarToShow: Int) {
         taskViewModel.seekbarFragment.showBar(buttons[seekbarToShow], stringIDs[seekbarToShow], liveData[seekbarToShow], seekbarsData, seekbarToShow)
         taskViewModel.seekbarWrapperHide.value = false
+
+        if (currentSeekBar != -1) {
+            buttonTransitions[currentSeekBar].reverseTransition(transitionDuration)
+        }
+
+        buttonTransitions[seekbarToShow].startTransition(transitionDuration)
+        currentSeekBar = seekbarToShow
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

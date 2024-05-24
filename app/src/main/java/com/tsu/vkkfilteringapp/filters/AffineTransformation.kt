@@ -2,22 +2,21 @@ package com.tsu.vkkfilteringapp.filters
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
-import androidx.core.graphics.get
 import androidx.core.graphics.green
 import androidx.core.graphics.red
-import androidx.core.graphics.set
 import com.tsu.vkkfilteringapp.TaskViewModel
 import com.tsu.vkkfilteringapp.graphics2d.Point2D
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import com.tsu.vkkfilteringapp.matrices.Matrix3x3
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 class AffineTransformation {
@@ -27,6 +26,11 @@ class AffineTransformation {
         val transformationMatrix = getTransformationMatrixByTriangles(taskViewModel.affineToolOrigTriangle, taskViewModel.affineToolTransTriangle)
         transformationMatrix.rows[0][2] = 0F
         transformationMatrix.rows[1][2] = 0F
+
+        return transformBitmapByMatrix(bitmap, transformationMatrix, taskViewModel)
+    }
+
+    private fun transformBitmapByMatrix(bitmap: Bitmap, transformationMatrix: Matrix3x3, taskViewModel: TaskViewModel, scaling: Boolean = false) : Bitmap {
 
         val affineMatrix = transformationMatrix.getInvertedMatrix()
 
@@ -53,10 +57,9 @@ class AffineTransformation {
         val origBitmapSize = bitmap.width * bitmap.height
 
         var newBitmap: Bitmap
-        if (newBitmapSize < 4000000) {
+        if (newBitmapSize < 4000000 || scaling) {
 
             var currentPoint: Point2D
-            var transparency: Int
 
             if (newBitmapSize < origBitmapSize) {
                 // Use trilinear
@@ -134,7 +137,7 @@ class AffineTransformation {
         val delta = origBitmap.height.toFloat() / origBitmap.width.toFloat()
 
         var inBounds = true
-        while (inBounds) {
+        while (inBounds && corners[0].x > 0 && corners[0].y > 0) {
             for (ci in 0..3) {
                 if (newBitmap.getPixel(corners[ci].x.toInt(), corners[ci].y.toInt()).alpha == 0) {
                     inBounds = false
@@ -170,8 +173,6 @@ class AffineTransformation {
         val bottomLeftColor = bitmap.getPixel(point.x.toInt(), point.y.toInt() + 1)
         val bottomRightColor = bitmap.getPixel(point.x.toInt() + 1, point.y.toInt() + 1)
         val bottomPixel = getLinearInterpolatedColor(bottomLeftColor, bottomRightColor, point.x - floor(point.x))
-
-        Log.i("color", "$bottomLeftColor $bottomRightColor: $bottomPixel")
 
         return getLinearInterpolatedColor(topPixel, bottomPixel, point.y - floor(point.y))
     }
@@ -245,5 +246,31 @@ class AffineTransformation {
         }
 
         return newBitmap
+    }
+
+    fun rotateImage(bitmap: Bitmap, rotationAngle: Float, taskViewModel: TaskViewModel) : Bitmap {
+
+        val rotationMatrix = Matrix3x3(mutableListOf(
+            mutableListOf(cos(rotationAngle), -sin(rotationAngle), 0F),
+            mutableListOf(sin(rotationAngle), cos(rotationAngle), 0F),
+            mutableListOf(0F, 0F, 1F)
+        ))
+
+        return transformBitmapByMatrix(bitmap, rotationMatrix, taskViewModel)
+    }
+
+    fun scaleImage(bitmap: Bitmap, scale: Float, taskViewModel: TaskViewModel) : Bitmap {
+
+        val scaleMatrix = Matrix3x3()
+        scaleMatrix.rows[0][0] = scale
+        scaleMatrix.rows[1][1] = scale
+        scaleMatrix.rows[2][2] = 1F
+
+        return transformBitmapByMatrix(bitmap, scaleMatrix, taskViewModel, true)
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = AffineTransformation()
     }
 }

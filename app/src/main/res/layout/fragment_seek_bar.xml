@@ -5,7 +5,7 @@
     android:id="@+id/seekBarWrapper"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:paddingHorizontal="10dp"
+    android:paddingHorizontal="20dp"
     tools:context=".fragments.SeekbarFragment">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/tektur_medium"
-        android:text="@string/minValue"
+        android:text="@string/min_value"
         android:textAlignment="center"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,7 +24,8 @@
         android:id="@+id/seekBar"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:paddingHorizontal="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/maxValue"
         app:layout_constraintStart_toEndOf="@+id/minValue"
@@ -35,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/tektur_medium"
-        android:text="@string/maxValue"
+        android:text="@string/max_value"
         android:textAlignment="center"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"

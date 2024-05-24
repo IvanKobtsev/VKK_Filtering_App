@@ -50,12 +50,12 @@
         <item>Cubic spline</item>
         <item>Open-B-Spline</item>
     </string-array>
-    <string name="masking_core_radius">Ядро (r): %d</string>
-    <string name="masking_amount">Объём: %d</string>
-    <string name="retouch_brush_radius">Кисть (r): %d</string>
-    <string name="retouch_intensity">Интенсивность: %d</string>
-    <string name="minValue">0</string>
-    <string name="maxValue">100</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="masking_core_radius">Ядро (r): %s</string>
+    <string name="masking_amount">Объём: %s</string>
+    <string name="retouch_brush_radius">Кисть (r): %s</string>
+    <string name="retouch_intensity">Интенс-ть: %s</string>
+    <string name="min_value">0</string>
+    <string name="max_value">100</string>
+    <string name="rotation_value">Повернуть на: %d°</string>
+    <string name="scaling_value">Увеличить в: %s раз(а)</string>
 </resources>

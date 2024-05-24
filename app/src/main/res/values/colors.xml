@@ -23,4 +23,5 @@
     <color name="affineTransTri">#CC0000FF</color>
     <color name="affineTransTriTransparent">#800000FF</color>
     <color name="shadowed">#66000000</color>
+    <color name="seamlessBG">#1AB6B6B6</color>
 </resources>
