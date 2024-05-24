@@ -3,6 +3,7 @@ package com.tsu.vkkfilteringapp.fragments
 import android.annotation.SuppressLint
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -80,8 +81,17 @@ class MaskingToolFragment : Fragment() {
             binding.amountCall.text = resources.getString(R.string.masking_amount, it.toString())
         }
 
+        taskViewModel.seekbarWrapperHide.observe(requireActivity()) {
+            if (it && currentSeekBar != -1) {
+                buttonTransitions[currentSeekBar].reverseTransition(transitionDuration)
+                currentSeekBar = -1
+            }
+        }
+
         taskViewModel.maskToolCoreRadiusValue.value = seekbarsData[0].getFloatValue()
         taskViewModel.maskToolAmountValue.value = seekbarsData[1].getFloatValue()
+
+        currentSeekBar = -1
     }
 
     private fun switchSeekbar(seekbarToShow: Int) {

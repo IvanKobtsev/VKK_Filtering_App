@@ -27,7 +27,7 @@ class TaskViewModel : ViewModel() {
 
     // Rotation-related
     var rotationToolNeedToUpdate = MutableLiveData(false)
-    var rotationToolCancelPressed = MutableLiveData(false)
+    var rotationToolAngle = MutableLiveData(90F)
 
     // Filters-related
     var filtersToolNeedToUpdate = MutableLiveData(false)
@@ -35,7 +35,7 @@ class TaskViewModel : ViewModel() {
 
     // Scaling-related
     var scalingToolNeedToUpdate = MutableLiveData(false)
-    var scalingToolCancelPressed = MutableLiveData(false)
+    var scalingToolScale = MutableLiveData(0.5F)
 
     // Faces-related
     var facesToolNeedToUpdate = MutableLiveData(false)
@@ -47,7 +47,6 @@ class TaskViewModel : ViewModel() {
 
     // Masking-related
     var maskToolNeedToUpdate = MutableLiveData(false)
-    var maskToolCancelPressed = MutableLiveData(false)
     var maskToolAmountValue = MutableLiveData<Float>() // до 2х
     var maskToolCoreRadiusValue = MutableLiveData<Float>() // от 1 до 5
 

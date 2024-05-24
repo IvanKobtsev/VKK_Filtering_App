@@ -64,6 +64,21 @@ class SeekbarFragment : Fragment() {
         canChangeValue = true
     }
 
+    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarData: SeekbarData) {
+
+        canChangeValue = false
+        taskViewModel.textViewToWrite.value = textView
+        taskViewModel.textViewStringID = stringID
+        binding.seekBar.progress = seekbarData.currentValue
+        binding.seekBar.max = seekbarData.getMax()
+        binding.minValue.text = seekbarData.getTextMin()
+        binding.maxValue.text = seekbarData.getTextMax()
+
+        currentSeekbarData = seekbarData
+        currentLiveDataToEdit = liveDataToEdit
+        canChangeValue = true
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() = SeekbarFragment()

@@ -81,8 +81,6 @@ class MainActivity : AppCompatActivity() {
         val adLink = Uri.parse("android.resource://$packageName/${R.raw.title_bg}")
         bgPlayer.setVideoURI(adLink)
 
-        Log.e("WTF", "wtf")
-
         binding.bgPlayer.setOnPreparedListener { mediaPlayer: MediaPlayer ->
 
             mediaPlayer.isLooping = true
