@@ -32,6 +32,12 @@ import com.tsu.vkkfilteringapp.filters.UnsharpMasking
 import com.tsu.vkkfilteringapp.fragments.AffineSavingFragment
 import com.tsu.vkkfilteringapp.fragments.AffineToolFragment
 import com.tsu.vkkfilteringapp.fragments.FacesToolFragment
+import com.tsu.vkkfilteringapp.fragments.FiltersToolFragment
+import com.tsu.vkkfilteringapp.fragments.MaskingToolFragment
+import com.tsu.vkkfilteringapp.fragments.RetouchToolFragment
+import com.tsu.vkkfilteringapp.fragments.RotationToolFragment
+import com.tsu.vkkfilteringapp.fragments.ScalingToolFragment
+import com.tsu.vkkfilteringapp.fragments.SeekBarFragment
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -57,6 +63,8 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var fragments: List<Fragment>
     private lateinit var affineSavingFragment: AffineSavingFragment
+
+    private var seekBarFragment = SeekBarFragment()
 
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
@@ -109,12 +117,12 @@ class ImageActivity : AppCompatActivity() {
         affineFragment = AffineToolFragment.newInstance()
 
         fragments = listOf(
+            RotationToolFragment.newInstance(),
+            FiltersToolFragment.newInstance(),
+            ScalingToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
+            RetouchToolFragment.newInstance(),
+            MaskingToolFragment.newInstance(),
             affineFragment)
 
         affineSavingFragment = AffineSavingFragment.newInstance()
