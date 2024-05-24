@@ -29,7 +29,6 @@
     <string name="accept_deletion">Вы точно хотите удалить картинку?</string>
     <string name="accept_exit">Вы точно хотите выйти?</string>
     <string name="there_is_no_autosave">Ваши изменения не сохраняются автоматически!</string>
-    <string name="fileName">Или оставьте пустым</string>
     <string name="delete">Удалить</string>
     <string name="leave">Оставить</string>
     <string name="transparentBG">Прозрачный фон</string>

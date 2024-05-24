@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -62,6 +63,7 @@ class ImageActivity : AppCompatActivity() {
     private var imageViewBasePosition = 0F
     private var imageViewOriginalPosition = 0F
     private var askedAlready = false
+    private var retouching = false
 
     // Companions
     private var affineTransformation = AffineTransformation.newInstance()
@@ -130,30 +132,37 @@ class ImageActivity : AppCompatActivity() {
         // Tool buttons' listeners
 
         binding.rotationTool.setOnClickListener {
+            retouching = false
             showToolProps(0)
         }
 
         binding.filtersTool.setOnClickListener {
+            retouching = false
             showToolProps(1)
         }
 
         binding.scalingTool.setOnClickListener {
+            retouching = false
             showToolProps(2)
         }
 
         binding.faceRecognitionTool.setOnClickListener {
+            retouching = false
             showToolProps(3)
         }
 
         binding.retouchTool.setOnClickListener {
+            retouching = true
             showToolProps(4)
         }
 
         binding.maskingTool.setOnClickListener {
+            retouching = false
             showToolProps(5)
         }
 
         binding.affineTransformTool.setOnClickListener {
+            retouching = false
             showToolProps(6)
         }
 
@@ -185,52 +194,67 @@ class ImageActivity : AppCompatActivity() {
         }
 
         taskViewModel.motionEvent.observe(this) {
-
+            var scale = editedImage.width.toFloat()*editedImage.height.toFloat()/binding.imageToEdit.width.toFloat()/editedImage.height
             when (it.action) {
                 MotionEvent.ACTION_DOWN -> {
-
-                    if (!taskViewModel.picturePicked) {
-                        PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
+                    if (retouching){
+                        Log.e("retouching","Start")
+                        binding.imageToEdit.setImageBitmap(editedImage)
                     }
                     else {
-                        if (taskViewModel.selectedTool == 6) {
-                            affineFragment.setPoint(it.x, it.y)
-                            checkForNullPoints()
+                        if (!taskViewModel.picturePicked) {
+                            PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
+                        } else {
+                            if (taskViewModel.selectedTool == 6) {
+                                affineFragment.setPoint(it.x, it.y)
+                                checkForNullPoints()
+                            }
+
+                            binding.imageToEdit.invalidate()
                         }
 
-                        binding.imageToEdit.invalidate()
+                        imageViewOriginalPosition = binding.imageToEdit.x
                     }
-
-                    imageViewOriginalPosition = binding.imageToEdit.x
                 }
-
                 MotionEvent.ACTION_MOVE -> {
 
-                    if (taskViewModel.selectedTool == -1 && taskViewModel.picturePicked) {
+                    if (retouching){
+                        editedImage = RetouchingBrush.retouching(
+                            (it.x*scale).toInt(), (it.y*scale).toInt(),
+                            50,editedImage,0.2)
+                        Log.e("retouching",""+it.x+"   "+it.y)
+                        binding.imageToEdit.setImageBitmap(editedImage)
 
-                        if (lastX > it.x) {
-                            draggingCount += lastX - it.x
-                            binding.imageToEdit.x -= lastX - it.x
-                        }
+                    } else {
+                        if (taskViewModel.selectedTool == -1 && taskViewModel.picturePicked) {
 
-                        lastX = it.x
-
-                        if (draggingCount > 200) {
-                            if (taskViewModel.hasUnsavedChanges.value == false) {
-                                deleteImage()
+                            if (lastX > it.x) {
+                                draggingCount += lastX - it.x
+                                binding.imageToEdit.x -= lastX - it.x
                             }
-                            else if (!askedAlready) {
-                                askedAlready = true
-                                askToAcceptDialog()
+
+                            lastX = it.x
+
+                            if (draggingCount > 200) {
+                                if (taskViewModel.hasUnsavedChanges.value == false) {
+                                    deleteImage()
+                                } else if (!askedAlready) {
+                                    askedAlready = true
+                                    askToAcceptDialog()
+                                }
                             }
+
+
                         }
-
-
                     }
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    binding.imageToEdit.x = imageViewOriginalPosition
+                    if (retouching){
+                        Log.e("retouching","Finish")
+                    } else {
+                        binding.imageToEdit.x = imageViewOriginalPosition
+                    }
                 }
             }
 
