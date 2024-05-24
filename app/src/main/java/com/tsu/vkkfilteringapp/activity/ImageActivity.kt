@@ -46,7 +46,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.opencv.core.Point
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream

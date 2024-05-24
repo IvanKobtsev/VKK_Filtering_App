@@ -17,6 +17,7 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.tsu.vkkfilteringapp.R
@@ -133,7 +134,16 @@ class MainActivity : AppCompatActivity() {
     private fun registerPermission() {
 
         permissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            }
+    }
+
+    private fun informationAboutPermission(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.dialog_title)
+        builder.setMessage(R.string.dialog_message)
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun requestPermission() {
@@ -142,22 +152,20 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i("Permission: ", "Granted")
+                Toast.makeText(this,"Здравствуйте! ",Toast.LENGTH_SHORT).show()
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.CAMERA
             ) -> {
-                Toast.makeText(
-                    this,
-                    "Нам необходимо разрешение, чтобы вы могли загружать отснятые фото напрямую в редактор",
-                    Toast.LENGTH_LONG
-                ).show()
+                Log.e("resumed", "req123")
+                informationAboutPermission()
             }
 
 
             else -> {
+                informationAboutPermission()
                 permissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
