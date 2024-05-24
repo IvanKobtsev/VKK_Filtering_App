@@ -49,9 +49,10 @@
         <item>Bezier curve</item>
         <item>Cubic spline</item>
     </string-array>
-    <string name="coeff1">Коэфф: %d</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="masking_core_radius">Ядро (r): %d</string>
+    <string name="masking_amount">Объём: %d</string>
+    <string name="retouch_brush_radius">Кисть (r): %d</string>
+    <string name="retouch_intensity">Интенсивность: %d</string>
     <string name="minValue">0</string>
     <string name="maxValue">100</string>
 </resources>

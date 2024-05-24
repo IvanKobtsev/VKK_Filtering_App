@@ -2,7 +2,6 @@ package com.tsu.vkkfilteringapp.activity
 
 import android.content.ContentValues
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Build
@@ -37,7 +36,7 @@ import com.tsu.vkkfilteringapp.fragments.MaskingToolFragment
 import com.tsu.vkkfilteringapp.fragments.RetouchToolFragment
 import com.tsu.vkkfilteringapp.fragments.RotationToolFragment
 import com.tsu.vkkfilteringapp.fragments.ScalingToolFragment
-import com.tsu.vkkfilteringapp.fragments.SeekBarFragment
+//import com.tsu.vkkfilteringapp.fragments.SeekbarFragment
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -64,7 +63,7 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var fragments: List<Fragment>
     private lateinit var affineSavingFragment: AffineSavingFragment
 
-    private var seekBarFragment = SeekBarFragment()
+//    private var seekBarFragment = SeekbarFragment()
 
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
@@ -113,6 +112,7 @@ class ImageActivity : AppCompatActivity() {
             binding.retouchTool.background as TransitionDrawable,
             binding.maskingTool.background as TransitionDrawable,
             binding.affineTransformTool.background as TransitionDrawable)
+
         // Fragments setting
         affineFragment = AffineToolFragment.newInstance()
 
@@ -201,6 +201,14 @@ class ImageActivity : AppCompatActivity() {
             taskViewModel.picturePicked = true
         }
 
+        taskViewModel.seekbarWrapperHidden.observe(this) {
+            if (it) {
+                binding.seekBarFragmentWrapper.y += 500
+            }
+            else {
+                binding.seekBarFragmentWrapper.y -= 500
+            }
+        }
 
         // Affine Observers
 
@@ -344,6 +352,10 @@ class ImageActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Seekbar wrapper setting
+        taskViewModel.seekbarWrapperHidden.value = true
+//        supportFragmentManager.beginTransaction().replace(binding.seekBarFragmentWrapper.id, seekBarFragment).commit()
 
     }
 
