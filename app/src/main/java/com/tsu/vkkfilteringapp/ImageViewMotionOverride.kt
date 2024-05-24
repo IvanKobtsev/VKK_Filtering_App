@@ -62,6 +62,8 @@ class ImageViewMotionOverride(context: Context, attributeSet: AttributeSet) : an
 
             when (taskViewModel.selectedTool) {
                 0 -> {
+                }
+                4->{
 
                 }
                 6 -> {
