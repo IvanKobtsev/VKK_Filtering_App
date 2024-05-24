@@ -11,5 +11,5 @@
         android:textSize="18sp"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
-        android:hint="@string/fileName" />
+        android:hint="@string/file_name" />
 </LinearLayout>

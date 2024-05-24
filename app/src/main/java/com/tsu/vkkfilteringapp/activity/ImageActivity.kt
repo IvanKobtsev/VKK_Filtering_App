@@ -1,32 +1,44 @@
-package com.tsu.vkkfilteringapp
+package com.tsu.vkkfilteringapp.activity
 
 import android.content.ContentValues
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
-import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.tsu.vkkfilteringapp.PhotoPickerSheet
+import com.tsu.vkkfilteringapp.R
+import com.tsu.vkkfilteringapp.TaskViewModel
 import com.tsu.vkkfilteringapp.databinding.ActivityImageBinding
 import com.tsu.vkkfilteringapp.filters.AffineTransformation
 import com.tsu.vkkfilteringapp.filters.UnsharpMasking
+import com.tsu.vkkfilteringapp.fragments.AffineSavingFragment
 import com.tsu.vkkfilteringapp.fragments.AffineToolFragment
 import com.tsu.vkkfilteringapp.fragments.FacesToolFragment
+import com.tsu.vkkfilteringapp.fragments.FiltersToolFragment
+import com.tsu.vkkfilteringapp.fragments.MaskingToolFragment
+import com.tsu.vkkfilteringapp.fragments.RetouchToolFragment
+import com.tsu.vkkfilteringapp.fragments.RotationToolFragment
+import com.tsu.vkkfilteringapp.fragments.ScalingToolFragment
+import com.tsu.vkkfilteringapp.fragments.SeekBarFragment
+import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -52,10 +64,29 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var fragments: List<Fragment>
     private lateinit var affineSavingFragment: AffineSavingFragment
 
+    private var seekBarFragment = SeekBarFragment()
+
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
     private lateinit var animAppear: Animation
     private lateinit var animDisappear: Animation
+
+    // Toast cool-downs
+    private var canShowNoImageToast = true
+    private var noImageCoolDownTimer = object: CountDownTimer(2000, 2000) {
+        override fun onTick(millisUntilFinished: Long) {}
+        override fun onFinish() { canShowNoImageToast = true }
+    }
+    private var canShowNeedToApplyToast = true
+    private var needToApplyCoolDownTimer = object: CountDownTimer(2000, 2000) {
+        override fun onTick(millisUntilFinished: Long) {}
+        override fun onFinish() { canShowNeedToApplyToast = true }
+    }
+    private var canShowTooLargeImageToast = true
+    private var tooLargeImageCoolDownTimer = object: CountDownTimer(3500, 3500) {
+        override fun onTick(millisUntilFinished: Long) {}
+        override fun onFinish() { canShowTooLargeImageToast = true }
+    }
 
     // Motion events related
     private var lastX = 0F
@@ -63,10 +94,8 @@ class ImageActivity : AppCompatActivity() {
     private var imageViewBasePosition = 0F
     private var imageViewOriginalPosition = 0F
     private var askedAlready = false
-    private var retouching = false
 
-    // Companions
-    private var affineTransformation = AffineTransformation.newInstance()
+    private var affineTransformation = AffineTransformation()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,12 +117,12 @@ class ImageActivity : AppCompatActivity() {
         affineFragment = AffineToolFragment.newInstance()
 
         fragments = listOf(
+            RotationToolFragment.newInstance(),
+            FiltersToolFragment.newInstance(),
+            ScalingToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
-            FacesToolFragment.newInstance(),
+            RetouchToolFragment.newInstance(),
+            MaskingToolFragment.newInstance(),
             affineFragment)
 
         affineSavingFragment = AffineSavingFragment.newInstance()
@@ -121,49 +150,45 @@ class ImageActivity : AppCompatActivity() {
         }
 
         binding.saveButton.setOnClickListener {
-            if (this::editedImage.isInitialized) {
+            if (taskViewModel.picturePicked && !taskViewModel.isApplyingChanges) {
                 callSaveDialog()
             }
+            else if (taskViewModel.isApplyingChanges) {
+                needToApplyWarning()
+            }
             else {
-                Toast.makeText(this, "Вы не загрузили картинку!", Toast.LENGTH_SHORT).show()
+                noImageWarning()
             }
         }
 
         // Tool buttons' listeners
 
         binding.rotationTool.setOnClickListener {
-            retouching = false
-            showToolProps(0)
+            switchToolProps(0)
         }
 
         binding.filtersTool.setOnClickListener {
-            retouching = false
-            showToolProps(1)
+            switchToolProps(1)
         }
 
         binding.scalingTool.setOnClickListener {
-            retouching = false
-            showToolProps(2)
+            switchToolProps(2)
         }
 
         binding.faceRecognitionTool.setOnClickListener {
-            retouching = false
-            showToolProps(3)
+            switchToolProps(3)
         }
 
         binding.retouchTool.setOnClickListener {
-            retouching = true
-            showToolProps(4)
+            switchToolProps(4)
         }
 
         binding.maskingTool.setOnClickListener {
-            retouching = false
-            showToolProps(5)
+            switchToolProps(5)
         }
 
         binding.affineTransformTool.setOnClickListener {
-            retouching = false
-            showToolProps(6)
+            switchToolProps(6)
         }
 
         // Observers
@@ -176,88 +201,148 @@ class ImageActivity : AppCompatActivity() {
             taskViewModel.picturePicked = true
         }
 
+
+        // Affine Observers
+
+        taskViewModel.affineToolCancelPressed.observe(this) {
+            if (it) {
+                unlockToolScrollAndSave()
+                revertChanges()
+            }
+        }
+
         taskViewModel.affineToolSelectedPoint.observe(this) {
 
+        }
+
+        taskViewModel.tooLargeImage.observe(this) {
+            if (it) {
+                tooLargeImageWarning()
+            }
         }
 
         taskViewModel.affineToolNeedToUpdate.observe(this) {
             if (it) {
 
+                lockUI()
                 binding.progressBarOverlay.startAnimation(animFadeIn)
 
                 GlobalScope.launch(Dispatchers.Main) {
 
                     processImage()
-                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, affineSavingFragment).commit()
+
+                    if (newBitmap.width == editedImage.width &&
+                        newBitmap.height == editedImage.height) {
+                        binding.imageToEdit.alpha = 1F
+                        taskViewModel.tooLargeImage.value = true
+                    }
+                    else {
+                        binding.imageToEdit.alpha = 1F
+                        binding.imageToEdit.setImageBitmap(newBitmap)
+
+                        lockToolScrollAndSave()
+                        taskViewModel.canDrawOnImageView = false
+                        binding.imageToEdit.invalidate()
+
+                        if (taskViewModel.affineToolShowCropped.value!!) {
+                            binding.imageToEdit.setImageBitmap(affineTransformation.getCropDemo(newBitmap, taskViewModel))
+                        }
+
+                        supportFragmentManager.beginTransaction().replace(binding.toolProps.id, affineSavingFragment).commit()
+                    }
                 }
             }
         }
 
+        // Base observers
+
         taskViewModel.motionEvent.observe(this) {
-            var scale = editedImage.width.toFloat()*editedImage.height.toFloat()/binding.imageToEdit.width.toFloat()/editedImage.height
+
             when (it.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    if (retouching){
-                        Log.e("retouching","Start")
-                        binding.imageToEdit.setImageBitmap(editedImage)
+
+                    if (!taskViewModel.picturePicked) {
+                        PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
                     }
                     else {
-                        if (!taskViewModel.picturePicked) {
-                            PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
-                        } else {
-                            if (taskViewModel.selectedTool == 6) {
+                        when (taskViewModel.selectedTool)  {
+                            6 -> {
                                 affineFragment.setPoint(it.x, it.y)
                                 checkForNullPoints()
                             }
-
-                            binding.imageToEdit.invalidate()
                         }
 
-                        imageViewOriginalPosition = binding.imageToEdit.x
+                        binding.imageToEdit.invalidate()
                     }
+
+                    imageViewOriginalPosition = binding.imageToEdit.x
                 }
+
                 MotionEvent.ACTION_MOVE -> {
+                    if (taskViewModel.picturePicked) {
+                        when (taskViewModel.selectedTool) {
+                            -1 -> {
+                                if (lastX > it.x) {
+                                    draggingCount += lastX - it.x
+                                    binding.imageToEdit.x -= lastX - it.x
+                                }
 
-                    if (retouching){
-                        editedImage = RetouchingBrush.retouching(
-                            (it.x*scale).toInt(), (it.y*scale).toInt(),
-                            50,editedImage,0.2)
-                        Log.e("retouching",""+it.x+"   "+it.y)
-                        binding.imageToEdit.setImageBitmap(editedImage)
+                                lastX = it.x
 
-                    } else {
-                        if (taskViewModel.selectedTool == -1 && taskViewModel.picturePicked) {
-
-                            if (lastX > it.x) {
-                                draggingCount += lastX - it.x
-                                binding.imageToEdit.x -= lastX - it.x
-                            }
-
-                            lastX = it.x
-
-                            if (draggingCount > 200) {
-                                if (taskViewModel.hasUnsavedChanges.value == false) {
-                                    deleteImage()
-                                } else if (!askedAlready) {
-                                    askedAlready = true
-                                    askToAcceptDialog()
+                                if (draggingCount > 200) {
+                                    if (taskViewModel.hasUnsavedChanges.value == false) {
+                                        deleteImage()
+                                        draggingCount = 0F
+                                    }
+                                    else if (!askedAlready) {
+                                        askedAlready = true
+                                        askToAcceptDialog()
+                                    }
                                 }
                             }
-
-
                         }
                     }
                 }
 
-                MotionEvent.ACTION_UP -> {
-                    if (retouching){
-                        Log.e("retouching","Finish")
-                    } else {
-                        binding.imageToEdit.x = imageViewOriginalPosition
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    binding.imageToEdit.x = imageViewOriginalPosition
+                }
+            }
+        }
+
+        taskViewModel.hasUnsavedChanges.observe(this) {
+            if (it) {
+                when (taskViewModel.selectedTool) {
+                    6 -> {
+                        editedImage = if (taskViewModel.affineToolShowCropped.value!!) {
+                            affineTransformation.getCroppedImage(newBitmap, taskViewModel)
+                        } else {
+                            newBitmap
+                        }
+
+                        binding.imageToEdit.setImageBitmap(editedImage)
+                        taskViewModel.canDrawOnImageView = true
+                        taskViewModel.affineToolOrigTriangle = Triangle2D()
+                        taskViewModel.affineToolTransTriangle = Triangle2D()
+                        taskViewModel.affineToolCanApply.value = false
+
+                        unlockToolScrollAndSave()
+
+                        switchToolProps(-1)
                     }
                 }
             }
+        }
 
+        taskViewModel.affineToolShowCropped.observe(this) {
+            if (taskViewModel.picturePicked) {
+                if (it) {
+                    binding.imageToEdit.setImageBitmap(affineTransformation.getCropDemo(newBitmap, taskViewModel))
+                }
+                else {
+                    binding.imageToEdit.setImageBitmap(newBitmap)
+                }
+            }
         }
 
     }
@@ -288,8 +373,7 @@ class ImageActivity : AppCompatActivity() {
                     }
                     6 -> {
                         newBitmap = affineTransformation.transformBitmapByTriangles(editedImage,
-                            taskViewModel.affineToolOrigTriangle,
-                            taskViewModel.affineToolTransTriangle)
+                            taskViewModel)
                     }
                     else -> {
                         newBitmap = editedImage
@@ -300,17 +384,8 @@ class ImageActivity : AppCompatActivity() {
         }
         value.await()
 
-        if (newBitmap.width == editedImage.width &&
-            newBitmap.height == editedImage.height) {
-            binding.imageToEdit.alpha = 1F
-            Toast.makeText(this.baseContext, R.string.error_too_large_image, Toast.LENGTH_LONG).show()
-        }
-        else {
-            binding.imageToEdit.alpha = 1F
-            binding.imageToEdit.setImageBitmap(newBitmap)
-        }
-
         binding.progressBarOverlay.startAnimation(animFadeOut)
+        unlockUI()
     }
 
     override fun onResume() {
@@ -322,12 +397,15 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private val transitionDuration = 200
-    private fun showToolProps(newActiveFragment: Int) {
-        if (taskViewModel.picturePicked) {
+    private fun switchToolProps(newActiveFragment: Int) {
+        if (taskViewModel.picturePicked && !taskViewModel.isApplyingChanges) {
             if (newActiveFragment == taskViewModel.selectedTool) {
                 binding.toolProps.y += 500
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
                 taskViewModel.selectedTool = -1
+            }
+            else if (newActiveFragment == -1) {
+                supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[taskViewModel.selectedTool]).commit()
             }
             else if (taskViewModel.selectedTool != -1) {
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
@@ -342,6 +420,12 @@ class ImageActivity : AppCompatActivity() {
                 taskViewModel.selectedTool = newActiveFragment
             }
             binding.imageToEdit.invalidate()
+        }
+        else if (taskViewModel.isApplyingChanges) {
+            needToApplyWarning()
+        }
+        else {
+            noImageWarning()
         }
     }
 
@@ -379,16 +463,16 @@ class ImageActivity : AppCompatActivity() {
         val editText = dialogLayout.findViewById<EditText>(R.id.fileNameEditor)
 
         with (builder) {
-            setTitle("Введите имя вашего файла")
-            setPositiveButton("Готово") { _, _ ->
-//                imageName = editText.text.toString()
+            setTitle(R.string.enter_file_name)
+            setPositiveButton(R.string.done) { _, _ ->
+                imageName = editText.text.toString()
                 saveMediaToStorage()
-                Toast.makeText(this.context, "Теперь ваша картинка в галерее!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.context, R.string.now_image_is_in_gallery, Toast.LENGTH_SHORT).show()
             }
-            setNegativeButton("Отменить") { _, _ ->
+            setNegativeButton(R.string.cancel) { _, _ ->
                 // Do nothing
             }
-//            setView(dialogLayout)
+            setView(dialogLayout)
             show()
         }
 
@@ -435,13 +519,13 @@ class ImageActivity : AppCompatActivity() {
         val filename: String
 
         if (this::imageName.isInitialized && imageName != "") {
-            filename = "${imageName}.jpg"
+            filename = "${imageName}.png"
         }
         else {
             val currentDate = Date()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
             val formattedDate = dateFormat.format(currentDate)
-            filename = "${formattedDate}.jpg"
+            filename = "${formattedDate}.png"
         }
 
         var fos: OutputStream? = null
@@ -452,7 +536,7 @@ class ImageActivity : AppCompatActivity() {
                 val contentValues = ContentValues().apply {
 
                     put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                 }
 
@@ -469,7 +553,7 @@ class ImageActivity : AppCompatActivity() {
         }
 
         fos?.use {
-            editedImage.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            editedImage.compress(Bitmap.CompressFormat.PNG, 100, it)
         }
     }
 
@@ -483,5 +567,55 @@ class ImageActivity : AppCompatActivity() {
         binding.imageToEdit.scaleType = ImageView.ScaleType.CENTER_CROP
 
         imageViewOriginalPosition = imageViewBasePosition
+    }
+
+    private fun lockUI() {
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+    private fun unlockUI() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+    private fun lockToolScrollAndSave() {
+        binding.tools.foreground = ResourcesCompat.getDrawable(resources, R.color.shadowed, theme)
+        taskViewModel.isApplyingChanges = true
+    }
+
+    private fun unlockToolScrollAndSave() {
+        binding.tools.foreground = ResourcesCompat.getDrawable(resources, R.color.transparent, theme)
+        taskViewModel.isApplyingChanges = false
+    }
+
+    private fun revertChanges() {
+        switchToolProps(-1)
+        binding.imageToEdit.setImageBitmap(editedImage)
+        taskViewModel.canDrawOnImageView = true
+    }
+
+    private fun noImageWarning() {
+        if (canShowNoImageToast) {
+            Toast.makeText(this, R.string.didnt_upload_image, Toast.LENGTH_SHORT).show()
+            canShowNoImageToast = false
+            noImageCoolDownTimer.start()
+        }
+    }
+
+    private fun needToApplyWarning() {
+        if (canShowNeedToApplyToast) {
+            Toast.makeText(this, R.string.apply_changes_first, Toast.LENGTH_SHORT).show()
+            canShowNeedToApplyToast = false
+            needToApplyCoolDownTimer.start()
+        }
+    }
+
+    private fun tooLargeImageWarning() {
+        if (canShowTooLargeImageToast) {
+            Toast.makeText(this, R.string.error_too_large_image, Toast.LENGTH_LONG).show()
+            canShowTooLargeImageToast = false
+            tooLargeImageCoolDownTimer.start()
+        }
     }
 }

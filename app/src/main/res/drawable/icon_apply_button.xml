@@ -3,8 +3,8 @@
     <item
         android:width="100dp"
         android:height="100dp"
-        android:left="2dp"
-        android:top="-27dp">
+        android:left="10dp"
+        android:top="-18dp">
         <vector
             android:width="50dp"
             android:height="50dp"

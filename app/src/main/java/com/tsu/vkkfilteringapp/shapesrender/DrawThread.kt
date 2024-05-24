@@ -47,7 +47,7 @@ class DrawThread() : Thread() {
     // Technical stuff
     private val paint = Paint()
     private val gson = Gson()
-    private val affineTransformation = AffineTransformation.newInstance()
+    private val affineTransformation = AffineTransformation()
 
     // FOV-related
     private var fovNear = 0.1F
@@ -514,7 +514,7 @@ class DrawThread() : Thread() {
                 triangleToDemonstrate.setToProjectWholeImage(bitmap)
             }
 
-            val affineTransformMatrix = affineTransformation.getTranformationMatrixByTriangles(triangleToDemonstrate, triangle).getInvertedMatrix()
+            val affineTransformMatrix = affineTransformation.getTransformationMatrixByTriangles(triangleToDemonstrate, triangle).getInvertedMatrix()
 
             fillTriangleIntoBitmap(triangle, affineTransformMatrix, bitmap, newBitmap)
         }

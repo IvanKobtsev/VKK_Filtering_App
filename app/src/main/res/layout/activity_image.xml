@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginEnd="10dp"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.ImageActivity">
 
 
     <ImageView
@@ -64,7 +64,7 @@
         android:contentDescription="@string/processed_photo"
         android:elevation="5dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/toolProps"
+        app:layout_constraintBottom_toBottomOf="@+id/toolProps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_max="500dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,12 +73,26 @@
         app:srcCompat="@drawable/pick_photo_warning_screen" />
 
     <RelativeLayout
+        android:id="@+id/seekBarFragmentWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:elevation="5dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/toolProps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/toolProps"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:orientation="horizontal"
         android:background="@color/white"
         android:elevation="5dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/toolsScroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -89,7 +103,6 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:elevation="10dp"
-        android:paddingHorizontal="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -98,6 +111,7 @@
             android:id="@+id/tools"
             android:layout_width="408dp"
             android:layout_height="60dp"
+            android:paddingHorizontal="10dp"
             android:gravity="end"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -202,7 +216,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
 
         <LinearLayout
             android:layout_width="wrap_content"

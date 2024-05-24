@@ -37,12 +37,21 @@
     <string name="exit">Выйти</string>
     <string name="close">close</string>
     <string name="update_spline">update</string>
-    <string name="fileName">Или оставьте пустым</string>
-    
+    <string name="file_name">Или оставьте пустым</string>
+    <string name="enter_file_name">Введите имя вашего файла</string>
+    <string name="now_image_is_in_gallery">Теперь ваша картинка в галерее!</string>
+    <string name="done">Готово</string>
+    <string name="didnt_upload_image">Вы не загрузили картинку!</string>
+    <string name="apply_changes_first">Сначала примените изменения!</string>
     <string name="new_name">Tutorial</string>
     <string-array name="spline">
         <item>Close-B-Spline</item>
         <item>Bezier curve</item>
         <item>Cubic spline</item>
     </string-array>
+    <string name="coeff1">Коэфф: %d</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="minValue">0</string>
+    <string name="maxValue">100</string>
 </resources>

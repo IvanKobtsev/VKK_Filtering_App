@@ -22,4 +22,5 @@
     <color name="affineOrigTriTransparent">#80FF0000</color>
     <color name="affineTransTri">#CC0000FF</color>
     <color name="affineTransTriTransparent">#800000FF</color>
+    <color name="shadowed">#66000000</color>
 </resources>
