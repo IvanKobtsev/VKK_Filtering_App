@@ -22,6 +22,8 @@ class TaskViewModel : ViewModel() {
     lateinit var seekbarFragment: SeekbarFragment
     var isSeekbarWrapperActuallyHidden = false
     var seekbarWrapperHide = MutableLiveData(false)
+    var acceptBasicSaving = MutableLiveData(false)
+    var cancelBasicSaving = MutableLiveData(false)
 
     // Rotation-related
     var rotationToolNeedToUpdate = MutableLiveData(false)

@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.tsu.vkkfilteringapp.BasicSaveChangesFragment
 import com.tsu.vkkfilteringapp.PhotoPickerSheet
 import com.tsu.vkkfilteringapp.R
 import com.tsu.vkkfilteringapp.TaskViewModel
@@ -66,6 +67,8 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var fragments: List<Fragment>
     private lateinit var affineSavingFragment: AffineSavingFragment
+
+    private lateinit var basicSavingFragment: BasicSaveChangesFragment
 
     private lateinit var seekBarFragment: SeekbarFragment
 
@@ -136,6 +139,7 @@ class ImageActivity : AppCompatActivity() {
         taskViewModel.seekbarFragment = seekBarFragment
 
         affineSavingFragment = AffineSavingFragment.newInstance()
+        basicSavingFragment = BasicSaveChangesFragment.newInstance()
 
         // Loading animation
         animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
@@ -216,6 +220,22 @@ class ImageActivity : AppCompatActivity() {
             }
         }
 
+        taskViewModel.acceptBasicSaving.observe(this) {
+            if (it) {
+                editedImage = newBitmap
+                unlockToolScrollAndSave()
+                switchToolProps(-1)
+            }
+        }
+
+        taskViewModel.cancelBasicSaving.observe(this) {
+            if (it) {
+                binding.imageToEdit.setImageBitmap(editedImage)
+                unlockToolScrollAndSave()
+                switchToolProps(-1)
+            }
+        }
+
         // Masking Observers
         taskViewModel.maskToolNeedToUpdate.observe(this) {
             if (it) {
@@ -228,7 +248,9 @@ class ImageActivity : AppCompatActivity() {
                     processImage()
 
                     binding.imageToEdit.setImageBitmap(newBitmap)
-                    
+
+                    lockToolScrollAndSave()
+                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, basicSavingFragment).commit()
                 }
             }
         }
@@ -437,7 +459,6 @@ class ImageActivity : AppCompatActivity() {
     private fun switchToolProps(newActiveFragment: Int) {
         if (taskViewModel.picturePicked && !taskViewModel.isApplyingChanges) {
             if (newActiveFragment == taskViewModel.selectedTool) {
-                taskViewModel.seekbarWrapperHide.value = true
                 binding.toolProps.y += 500
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
                 taskViewModel.selectedTool = -1
@@ -458,6 +479,7 @@ class ImageActivity : AppCompatActivity() {
                 taskViewModel.selectedTool = newActiveFragment
             }
             binding.imageToEdit.invalidate()
+            taskViewModel.seekbarWrapperHide.value = true
         }
         else if (taskViewModel.isApplyingChanges) {
             needToApplyWarning()
@@ -608,6 +630,7 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private fun lockUI() {
+        taskViewModel.seekbarWrapperHide.value = true
         window.setFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
