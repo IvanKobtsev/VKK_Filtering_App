@@ -19,6 +19,7 @@ class SeekbarFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var currentSeekbarData: SeekbarData
     private lateinit var currentLiveDataToEdit: MutableLiveData<Float>
+    private var canChangeValue = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,8 +28,10 @@ class SeekbarFragment : Fragment() {
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                currentSeekbarData.currentValue = progress
-                currentLiveDataToEdit.value = currentSeekbarData.getFloatValue()
+                if (canChangeValue) {
+                    currentSeekbarData.currentValue = progress
+                    currentLiveDataToEdit.value = currentSeekbarData.getFloatValue()
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -46,17 +49,19 @@ class SeekbarFragment : Fragment() {
 
     }
 
-    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarData: SeekbarData) {
+    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarDataList: MutableList<SeekbarData>, seekbarDataIndex: Int) {
 
+        canChangeValue = false
         taskViewModel.textViewToWrite.value = textView
         taskViewModel.textViewStringID = stringID
-        binding.seekBar.progress = seekbarData.currentValue
-        binding.seekBar.max = seekbarData.getMax()
-        binding.minValue.text = seekbarData.getTextMin()
-        binding.maxValue.text = seekbarData.getTextMax()
+        binding.seekBar.progress = seekbarDataList[seekbarDataIndex].currentValue
+        binding.seekBar.max = seekbarDataList[seekbarDataIndex].getMax()
+        binding.minValue.text = seekbarDataList[seekbarDataIndex].getTextMin()
+        binding.maxValue.text = seekbarDataList[seekbarDataIndex].getTextMax()
 
-        currentSeekbarData = seekbarData
+        currentSeekbarData = seekbarDataList[seekbarDataIndex]
         currentLiveDataToEdit = liveDataToEdit
+        canChangeValue = true
     }
 
     companion object {

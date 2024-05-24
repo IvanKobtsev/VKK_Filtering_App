@@ -36,7 +36,7 @@ import com.tsu.vkkfilteringapp.fragments.MaskingToolFragment
 import com.tsu.vkkfilteringapp.fragments.RetouchToolFragment
 import com.tsu.vkkfilteringapp.fragments.RotationToolFragment
 import com.tsu.vkkfilteringapp.fragments.ScalingToolFragment
-//import com.tsu.vkkfilteringapp.fragments.SeekbarFragment
+import com.tsu.vkkfilteringapp.fragments.SeekbarFragment
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -58,12 +58,16 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var newBitmap: Bitmap
     private lateinit var imageName: String
 
+    // Masking-related
+    private lateinit var maskingTool: UnsharpMasking
+
+    // Affine-related
     private lateinit var affineFragment: AffineToolFragment
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var fragments: List<Fragment>
     private lateinit var affineSavingFragment: AffineSavingFragment
 
-//    private var seekBarFragment = SeekbarFragment()
+    private lateinit var seekBarFragment: SeekbarFragment
 
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
@@ -103,6 +107,9 @@ class ImageActivity : AppCompatActivity() {
         taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         binding.imageToEdit.init(this, assets)
 
+        // Masking filter
+        maskingTool = UnsharpMasking()
+
         // Transitions setting
         buttonTransitions = listOf(
             binding.rotationTool.background as TransitionDrawable,
@@ -125,6 +132,9 @@ class ImageActivity : AppCompatActivity() {
             MaskingToolFragment.newInstance(),
             affineFragment)
 
+        seekBarFragment = SeekbarFragment.newInstance()
+        taskViewModel.seekbarFragment = seekBarFragment
+
         affineSavingFragment = AffineSavingFragment.newInstance()
 
         // Loading animation
@@ -138,12 +148,6 @@ class ImageActivity : AppCompatActivity() {
         binding.toolProps.y += 500
 
         PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
-
-        binding.maskingTool.setOnClickListener {
-            val blur = UnsharpMasking(editedImage, 1.0, 1)
-            binding.imageToEdit.setImageBitmap(blur.newImg)
-            editedImage = blur.newImg
-        }
 
         binding.exitButton.setOnClickListener {
             callExitDialog()
@@ -201,12 +205,31 @@ class ImageActivity : AppCompatActivity() {
             taskViewModel.picturePicked = true
         }
 
-        taskViewModel.seekbarWrapperHidden.observe(this) {
-            if (it) {
+        taskViewModel.seekbarWrapperHide.observe(this) {
+            if (it && !taskViewModel.isSeekbarWrapperActuallyHidden) {
                 binding.seekBarFragmentWrapper.y += 500
+                taskViewModel.isSeekbarWrapperActuallyHidden = true
             }
-            else {
+            else if (!it && taskViewModel.isSeekbarWrapperActuallyHidden) {
                 binding.seekBarFragmentWrapper.y -= 500
+                taskViewModel.isSeekbarWrapperActuallyHidden = false
+            }
+        }
+
+        // Masking Observers
+        taskViewModel.maskToolNeedToUpdate.observe(this) {
+            if (it) {
+
+                lockUI()
+                binding.progressBarOverlay.startAnimation(animFadeIn)
+
+                GlobalScope.launch(Dispatchers.Main) {
+
+                    processImage()
+
+                    binding.imageToEdit.setImageBitmap(newBitmap)
+                    
+                }
             }
         }
 
@@ -354,8 +377,8 @@ class ImageActivity : AppCompatActivity() {
         }
 
         // Seekbar wrapper setting
-        taskViewModel.seekbarWrapperHidden.value = true
-//        supportFragmentManager.beginTransaction().replace(binding.seekBarFragmentWrapper.id, seekBarFragment).commit()
+        taskViewModel.seekbarWrapperHide.value = true
+        supportFragmentManager.beginTransaction().replace(binding.seekBarFragmentWrapper.id, seekBarFragment).commit()
 
     }
 
@@ -381,7 +404,9 @@ class ImageActivity : AppCompatActivity() {
                         // Retouch
                     }
                     5 -> {
-                        // Masking
+                        newBitmap = maskingTool.processImage(editedImage,
+                            taskViewModel.maskToolAmountValue.value!!.toDouble(),
+                            taskViewModel.maskToolCoreRadiusValue.value!!.toInt())
                     }
                     6 -> {
                         newBitmap = affineTransformation.transformBitmapByTriangles(editedImage,
@@ -412,6 +437,7 @@ class ImageActivity : AppCompatActivity() {
     private fun switchToolProps(newActiveFragment: Int) {
         if (taskViewModel.picturePicked && !taskViewModel.isApplyingChanges) {
             if (newActiveFragment == taskViewModel.selectedTool) {
+                taskViewModel.seekbarWrapperHide.value = true
                 binding.toolProps.y += 500
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
                 taskViewModel.selectedTool = -1

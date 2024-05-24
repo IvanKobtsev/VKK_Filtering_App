@@ -21,7 +21,6 @@ class MaskingToolFragment : Fragment() {
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var buttonTransitions: List<TransitionDrawable>
     private lateinit var buttons: List<Button>
-//    private lateinit var seekbarFragment: SeekbarFragment
 
     private val stringIDs = listOf(
         R.string.masking_core_radius,
@@ -29,7 +28,7 @@ class MaskingToolFragment : Fragment() {
     )
 
     // Seekbars
-    private val seekbarsData = listOf(
+    var seekbarsData = mutableListOf(
         SeekbarData(0, 1, 5),
         SeekbarData(0, 1, 20, 10F)
     )
@@ -58,6 +57,10 @@ class MaskingToolFragment : Fragment() {
             binding.coreRadiusCall.background as TransitionDrawable,
             binding.amountCall.background as TransitionDrawable)
 
+        binding.affineApply.setOnClickListener {
+            taskViewModel.maskToolNeedToUpdate.value = true
+        }
+
         binding.coreRadiusCall.setOnClickListener {
             switchSeekbar(0)
         }
@@ -66,10 +69,18 @@ class MaskingToolFragment : Fragment() {
             switchSeekbar(1)
         }
 
+        taskViewModel.maskToolCoreRadiusValue.observe(requireActivity()) {
+            binding.coreRadiusCall.text = it.toString()
+        }
+
+        taskViewModel.maskToolAmountValue.observe(requireActivity()) {
+            binding.amountCall.text = it.toString()
+        }
     }
 
     private fun switchSeekbar(seekbarToShow: Int) {
-//        seekbarFragment.showBar(buttons[seekbarToShow], stringIDs[seekbarToShow], liveData[seekbarToShow], seekbarsData[seekbarToShow])
+        taskViewModel.seekbarFragment.showBar(buttons[seekbarToShow], stringIDs[seekbarToShow], liveData[seekbarToShow], seekbarsData, seekbarToShow)
+        taskViewModel.seekbarWrapperHide.value = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

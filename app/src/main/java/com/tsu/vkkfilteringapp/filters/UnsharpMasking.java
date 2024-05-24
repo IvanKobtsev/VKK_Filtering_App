@@ -29,7 +29,11 @@ public class UnsharpMasking {
     private int r ;
     private int num = 0;
     private int to ;
-    public UnsharpMasking(Bitmap img,Double amount,int r){
+    public UnsharpMasking(){
+        //threads = createThreads();
+    }
+
+    public Bitmap processImage(Bitmap img,Double amount,int r) {
         this.amount = amount;
         this.r = r;
         this.img = img;
@@ -45,7 +49,8 @@ public class UnsharpMasking {
 
         blur();
         unsharp();
-        //threads = createThreads();
+
+        return getNewImg();
     }
 
     private void check(){

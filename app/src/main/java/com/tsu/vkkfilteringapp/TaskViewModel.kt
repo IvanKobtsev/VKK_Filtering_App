@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.widget.Button
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.tsu.vkkfilteringapp.fragments.SeekbarFragment
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
 
 class TaskViewModel : ViewModel() {
@@ -18,8 +19,9 @@ class TaskViewModel : ViewModel() {
     var isApplyingChanges = false
     var selectedTool = -1
     var tooLargeImage = MutableLiveData(false)
-//    var seekbarFragment = SeekbarFragment.newInstance()
-    var seekbarWrapperHidden = MutableLiveData(false)
+    lateinit var seekbarFragment: SeekbarFragment
+    var isSeekbarWrapperActuallyHidden = false
+    var seekbarWrapperHide = MutableLiveData(false)
 
     // Rotation-related
     var rotationToolNeedToUpdate = MutableLiveData(false)
