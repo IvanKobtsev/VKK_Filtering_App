@@ -19,16 +19,6 @@ public class RetouchingBrush {
         int green = 0;
         int blue = 0;
 
-        //square
-/*        for(int i = x- radius;i<x+radius;i++)
-            for(int j = y - radius;j<y+radius;j++){
-                int color =bitmap.getPixel(i,j);
-                red+= Color.red(color);
-                green+= Color.green(color);
-                blue+= Color.blue(color);
-                counter++;
-            }
-*/
         for (int i = y - radius; i < y + radius; i++) {
             for (int j = x; Math.pow((j - x), 2) + Math.pow((i - y), 2) <= Math.pow(radius, 2); j--) {
                 int color = bitmap.getPixel(j, i);
@@ -49,52 +39,29 @@ public class RetouchingBrush {
         green /= counter;
         blue /= counter;
 
-
-//square
-/*        for(int i = x- radius;i<x+radius;i++)
-            for(int j = y - radius;j<y+radius;j++){
-                newBitmap.setPixel(i,j,Color.rgb(
-                        red, green, blue
-                ));
-            }
-*/
-        Log.i("retouching", "new start");
-       // ArrayList<ArrayList<Double>> a = new ArrayList<>();
-       // for (int i = 0; i < radius * 2; i++)
-       // {        a.add(new ArrayList<>());
-       //             for(int j = 0; j < radius*2;j++)
-       //                 a.get(i).add(0.0);
-       // }
-
         for (int i = y-radius, n = 0,k = radius*2; i < y+radius; i++,n--,k--) {
             Double iterX = (double) radius;
-            //Log.i("retouching","y  "+(i-y));
             int iterY =  (n>-radius)?Math.abs(n):k;
 
             for (int j = x; Math.pow((j-x),2) + Math.pow((i-y),2) <= Math.pow(radius,2); j--,iterX--) {
                 double compromiseCoeff = compromise *  Math.pow((iterY +  iterX)/2  / radius,2);
-                //Log.i("retouching","x "+(j-x)+"; c =  " + compromiseCoeff);
                 newBitmap.setPixel(j,i,Color.rgb(
                         findCompromise(red,0,j,i, compromiseCoeff,bitmap),
                         findCompromise(green,1,j,i, compromiseCoeff,bitmap),
                         findCompromise(blue,2,j,i, compromiseCoeff,bitmap)
                 ));
-            //    a.get(iterY+radius).set((int) (iterX+0),compromiseCoeff);
             }
             iterX = (double) radius;
             for (int j = x+1;  Math.pow((j-x),2) + Math.pow((i-y),2) <= Math.pow(radius,2); j++,iterX--) {
                 double compromiseCoeff = compromise * Math.pow((iterY +  iterX)/2  / radius,2);
-                //Log.i("retouching","x "+(j-x)+"; c =  " + compromiseCoeff);
                 newBitmap.setPixel(j,i,Color.rgb(
                         findCompromise(red,0,j,i, compromiseCoeff,bitmap),
                         findCompromise(green,1,j,i, compromiseCoeff,bitmap),
                         findCompromise(blue,2,j,i, compromiseCoeff,bitmap)
                 ));
-
-          //      a.get(iterY+radius).set((int)(iterX+0+j-x),compromiseCoeff);
             }
         }
-        //Log.i("retouching",a.toString());
+
 
         return newBitmap;
     }

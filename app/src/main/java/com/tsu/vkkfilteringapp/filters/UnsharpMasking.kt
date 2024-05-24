@@ -1,285 +1,279 @@
-package com.tsu.vkkfilteringapp.filters;
+package com.tsu.vkkfilteringapp.filters
 
-import static android.graphics.Bitmap.Config.ARGB_8888;
-import static androidx.core.graphics.ColorKt.toColor;
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import kotlin.math.abs
+import kotlin.math.exp
+import kotlin.math.max
 
-import static java.lang.Math.abs;
+class UnsharpMasking {
+    private var amount: Double? = null
+    private var img: Bitmap? = null
+    private lateinit var imgArray: IntArray
+    private lateinit var redArray: IntArray
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.util.Log;
+    private lateinit var greenArray: IntArray
+    private lateinit var blueArray: IntArray
+    private lateinit var newImgArray: IntArray
+    private var newImg: Bitmap? = null
+    private val threads: List<Thread>? = null
+    private val countCores = CheckCores().numberOfCores - 1
+    private var from = 0
+    private val finish = BooleanArray(countCores)
+    private var r = 0
+    private var num = 0
+    private var to = 0
+    fun processImage(img: Bitmap, amount: Double?, r: Int): Bitmap {
+        this.amount = amount
+        this.r = r
+        this.img = img
+        this.to = (img.height - 2) / countCores
+        this.from = 1
+        imgArray = IntArray(img.width * img.height)
+        img.getPixels(imgArray, 0, img.width, 0, 0, img.width, img.height)
+        redArray = IntArray(img.width * img.height)
+        greenArray = IntArray(img.width * img.height)
+        blueArray = IntArray(img.width * img.height)
+        convertedColor()
+        newImgArray = imgArray.clone()
 
-import java.util.ArrayList;
-import java.util.List;
+        blur2()
+        unsharp()
 
-public class UnsharpMasking {
-    private Double amount;
-    private Bitmap img;
-    private int[] imgArray;
-    private int[] redArray;
-
-    private int[] greenArray;
-    private int[] blueArray;
-    private int[] newImgArray;
-    private Bitmap newImg;
-    private List<Thread> threads;
-    private final int countCores = new CheckCores().getNumberOfCores()-1;
-    private int from;
-    private boolean[] finish = new boolean[countCores];
-    private int r ;
-    private int num = 0;
-    private int to ;
-    public UnsharpMasking(){
-        //threads = createThreads();
+        return getNewImg()
     }
 
-    public Bitmap processImage(Bitmap img,Double amount,int r) {
-        this.amount = amount;
-        this.r = r;
-        this.img = img;
-        this.to = (img.getHeight()-2)/countCores;
-        this.from = 1;
-        imgArray = new int[img.getWidth()*img.getHeight()];
-        img.getPixels(imgArray,0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
-        redArray = new int[img.getWidth()*img.getHeight()];
-        greenArray = new int[img.getWidth()*img.getHeight()];
-        blueArray = new int[img.getWidth()*img.getHeight()];
-        convertedColor();
-        newImgArray = imgArray.clone();
-
-        blur();
-        unsharp();
-
-        return getNewImg();
-    }
-
-    private void check(){
+    private fun check() {
         while (true) {
-            boolean work = false;
-            for(int i =0 ;i <threads.size();i++)
-            {
-                if(finish[i])work = true;
+            var work = false
+            for (i in threads!!.indices) {
+                if (finish[i]) work = true
             }
-            if(!work){
-                for(int i =0 ;i <threads.size();i++)
-                {
+            if (!work) {
+                for (i in threads.indices) {
                     try {
-                        threads.get(i).join();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        threads[i].join()
+                    } catch (e: InterruptedException) {
+                        throw RuntimeException(e)
                     }
                 }
-                return;
+                return
             }
         }
     }
 
-    private void convertedColor(){
-        for (int i =0 ;i < imgArray.length;i++){
-            redArray[i] = (imgArray[i] >> 16) & 0xff;
-            greenArray[i] = (imgArray[i] >>  8) & 0xff;
-            blueArray[i] = (imgArray[i]     ) & 0xff;
+    private fun convertedColor() {
+        for (i in imgArray.indices) {
+            redArray[i] = (imgArray[i] shr 16) and 0xff
+            greenArray[i] = (imgArray[i] shr 8) and 0xff
+            blueArray[i] = (imgArray[i]) and 0xff
         }
     }
-    private void convertedColorLong(){
-        for (int i =0 ;i < imgArray.length;i++){
-            redArray[i] = Color.red(imgArray[i]);
-            greenArray[i] = Color.green(imgArray[i]);
-            blueArray[i] = Color.blue(imgArray[i]);
-        }
-    }
-    private List<Thread> createThreads(){
-        List<Thread> threads = new ArrayList<>();
 
-        for (int i =0;i<countCores;i++) {
-            threads.add(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    blur();
-                }
-            }));
-            threads.get(i).start();
+    private fun convertedColorLong() {
+        for (i in imgArray.indices) {
+            redArray[i] = Color.red(imgArray[i])
+            greenArray[i] = Color.green(imgArray[i])
+            blueArray[i] = Color.blue(imgArray[i])
+        }
+    }
+
+    private fun createThreads(): List<Thread> {
+        val threads: MutableList<Thread> = ArrayList()
+
+        for (i in 0 until countCores) {
+            threads.add(Thread { blur() })
+            threads[i].start()
 
             try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.sleep(50)
+            } catch (e: InterruptedException) {
+                throw RuntimeException(e)
             }
-            to+=(img.getHeight()-2)/countCores;
-            from+=(img.getHeight()-2)/countCores;
-            num++;
+            to += (img!!.height - 2) / countCores
+            from += (img!!.height - 2) / countCores
+            num++
 
-            Log.i("unsharp",""+ num);
-
+            Log.i("unsharp", "" + num)
         }
-        return  threads;
+        return threads
     }
 
-    public void blur(){
+    fun blur() {
+        val core = gaussianCore(r, -0.6)
+        Log.i("unsharp", img!!.height.toString() + " : " + img!!.width)
 
-        ArrayList<ArrayList<Double>> core = gaussianCore(r,-0.6);
-        Log.i("unsharp",img.getHeight()+" : " +img.getWidth() );
-        for(int i =r;i<img.getHeight()-r;i++){
-            for(int j = r ;j<img.getWidth()-r;j++){
-                int iter = i* img.getWidth() + j;
-                double red = 0.0;
-                double green = 0.0;
-                double blue = 0.0;
-                int sum = 0;
-                for(int coreI = i -r,iCore = 0; coreI<i+r; coreI++,iCore++){
-                    for (int coreJ = j-r,jCore = 0; coreJ<j+r; coreJ++,jCore++){
-                        //Log.d("unsharp","coreI: "+ coreI);
-                        //Log.d("unsharp","coreJ: "+ coreJ);
-                        int coreIter = coreI*img.getWidth()+coreJ;
-                        red+= core.get(iCore).get(jCore)*redArray[coreIter];
-                        green+= core.get(iCore).get(jCore)*greenArray[coreIter];
-                        blue+= core.get(iCore).get(jCore)*blueArray[coreIter];
+        runBlocking {
+            (0 until img!!.height - r).chunked(4).map { rows ->
+                async(Dispatchers.Default) {
+                    for (i in rows) {
+                        for (j in r until img!!.width - r) {
+                            val iter = i * img!!.width + j
+                            var red = 0.0
+                            var green = 0.0
+                            var blue = 0.0
+                            val sum = 0
+                            var coreI = i - r
+                            var iCore = 0
+                            while (coreI < i + r) {
+                                var coreJ = j - r
+                                var jCore = 0
+                                while (coreJ < j + r) {
+                                    //Log.d("unsharp","coreI: "+ coreI);
+                                    //Log.d("unsharp","coreJ: "+ coreJ);
+                                    val coreIter = coreI * img!!.width + coreJ
+                                    red += core[iCore][jCore] * redArray[coreIter]
+                                    green += core[iCore][jCore] * greenArray[coreIter]
+                                    blue += core[iCore][jCore] * blueArray[coreIter]
+                                    coreJ++
+                                    jCore++
+                                }
+                                coreI++
+                                iCore++
+                            }
+
+                            newImgArray[iter] = Color.rgb(
+                                red.toInt(), green.toInt(), blue.toInt()
+                            )
+                        }
+                    }
+                }
+            }.awaitAll()
+        }
+
+    }
+
+    private fun blur2() {
+
+        runBlocking {
+            (r until img!!.height- r).chunked(4).map { rows ->
+                async(Dispatchers.Default) {
+                    for (i in rows) {
+                        for (j in r until  img!!.width- r) {
+                            val iter = i * img!!.width + j
+                            var red = 0.0
+                            var green = 0.0
+                            var blue = 0.0
+                            var sum = 0
+                            for (coreI in -r until r) {
+                                for (coreJ in -r until r) {
+                                    val iCore = i + coreI
+                                    val jCore = j + coreJ
+                                    val coreIterator = iCore * img!!.width + jCore
+                                    red += redArray[coreIterator].toDouble()
+                                    green += greenArray[coreIterator].toDouble()
+                                    blue += blueArray[coreIterator].toDouble()
+                                    sum++
+                                }
+                            }
+                            newImgArray[iter] =
+                                Color.rgb(
+                                    (red / sum).toInt(),
+                                    (green / sum).toInt(),
+                                    (blue / sum).toInt()
+                                )
+                        }
                     }
                 }
 
-                newImgArray[iter] = Color.rgb((int)(red), (int) (green), (int) (blue));
-            }
-            //Log.i("unsharp","i: "+ i);
+            }.awaitAll()
         }
 
-    }
 
-    private void blur2(){
-        ArrayList<ArrayList<Double>> core = gaussianCore(r,-0.6);
-        Log.i("unsharp",img.getHeight()+" : " +img.getWidth() );
-        for(int i =r;i<img.getHeight()-r;i++){
-            for(int j = r ;j<img.getWidth()-r;j++){
-                int iter = i* img.getWidth() + j;
-                double red = 0;
-                double green = 0;
-                double blue = 0;
-                int sum = 0;
-                for(int coreI =  -r; coreI<r; coreI++){
-                    for (int coreJ = -r; coreJ<r; coreJ++){
-                        int iCore = i+coreI;
-                        int jCore = j+coreJ;
-                        int coreIterator = iCore*img.getWidth()+jCore;
-                        red+= redArray[coreIterator];
-                        green+= greenArray[coreIterator];
-                        blue+= blueArray[coreIterator];
-                        sum++;
-                    }
-                }
-                newImgArray[iter] =
-                        Color.rgb((int) (red / sum), (int) (green / sum), (int) (blue / sum));
-                //newImgArray[iter] = Color.rgb((int)(red), (int) (green), (int) (blue));
-            }
-            //Log.i("unsharp","i: "+ i);
-        }
-        if(isEqal())
-            Log.e("unsharp","bluu");
 
     }
 
 
-    private ArrayList<ArrayList<Double>> gaussianCore(int radius, Double sigma) {
-        ArrayList<ArrayList<Double>> core = new ArrayList<>();
-        int matrixSize = 2*radius+1;
+    private fun gaussianCore(radius: Int, sigma: Double): ArrayList<ArrayList<Double>> {
+        val core = ArrayList<ArrayList<Double>>()
+        val matrixSize = 2 * radius + 1
 
-        Double sum = 0.0;
+        var sum = 0.0
 
-        for(double i =0;i< matrixSize;i++) {
-            core.add(new ArrayList<>());
-            for (double j = 0; j < matrixSize; j++) {
-                Double matrixI =  ((2 * i) / (matrixSize - 1) - 1);
-                Double matrixJ =  ((2 * j) / (matrixSize - 1) - 1);
-//                Double matrixI =  i-radius;
-  //              Double matrixJ =  j-radius;
-                core.get((int)i).add(gaussianFun(matrixI, matrixJ ,sigma));
-                sum+=core.get((int)i).get((int)j);
+        for (i in 0 until matrixSize) {
+            core.add(ArrayList())
+            for (j in 0 until matrixSize) {
+                val matrixI = ((2 * i / (matrixSize - 1) - 1).toDouble())
+                val matrixJ = ((2 * j / (matrixSize - 1) - 1).toDouble())
+                //                Double matrixI =  i-radius;
+                //              Double matrixJ =  j-radius;
+                core[i.toInt()].add(gaussianFun(matrixI, matrixJ, sigma))
+                sum += core[i.toInt()][j.toInt()]
             }
         }
 
-        for(int i =0;i< matrixSize;i++)
-            for (int j = 0; j < matrixSize; j++)
-                core.get(i).set(j,core.get(i).get(j)/sum);
-        Double s = 0.0;
-        for(int i =0;i< matrixSize;i++)
-            for (int j = 0; j < matrixSize; j++) {
-                s += core.get(i).get(j);
-                Log.e("unsharp",i+", "+j+": " + core.get(i).get(j));
-            }
-        Log.e("unsharp","" + s);
-        return core;
-    }
-
-    private Double gaussianFun(Double x,Double y,Double sigma){
-        Double numerator = Math.exp(-(x*x+y*y)/(2*sigma * sigma));
-        //Log.i("unsharp", x+", "+y+") "+numerator);
-        Double denominator =2*Math.PI*sigma;
-        //Log.i("unsharp", ""+denominator);
-        return numerator/denominator;
-    }
-    private void blurMultyThread(){
-        int localTo = to;
-        int localFrom = from;
-        if(img.getWidth()-1 < from +(img.getHeight()-2)/countCores) {
-            localTo = img.getWidth() - 1;
-            Log.i("unsharp", "ok");
+        for (i in 0 until matrixSize) for (j in 0 until matrixSize) core[i][j] = core[i][j] / sum
+        var s = 0.0
+        for (i in 0 until matrixSize) for (j in 0 until matrixSize) {
+            s += core[i][j]
+            Log.e("unsharp", i.toString() + ", " + j + ": " + core[i][j])
         }
-
-        Log.i("unsharp", num + ") " + from+ " - " +to);
-        for(int i = localFrom;i<localTo;i++){
-            for(int j = 1;j<img.getWidth()-1;j++) {
-                int iter = i * img.getWidth() + j;
-                int red = 0;
-                int green = 0;
-                int blue = 0;
-                int counter = 0;
-                for (int k = i - r; k < i + r; k++)
-                    for (int n = i - r; n < i + r; n++) {
-                        int localIter = k * img.getWidth() + n;
-                        red += redArray[localIter];
-                        green += greenArray[localIter];
-                        blue += blueArray[localIter];
-                        counter++;
-                    }
-                newImgArray[iter] = Color.rgb(red/counter,green/counter,blue/counter);
-            }
-            Log.i("unsharp", num + ") " + i);
-        }
-        Log.i("unsharp","okk"+ num);
-        newImg.setPixels(newImgArray,0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
-        Log.i("unsharp","okk"+ countCores);
+        Log.e("unsharp", "" + s)
+        return core
     }
 
-    private boolean isEqal(){
-        for(int i = 0;i < newImgArray.length;i++)
-            if(newImgArray[i]!=imgArray[i])return true;
-        return false;
+    private fun gaussianFun(x: Double, y: Double, sigma: Double): Double {
+        val numerator = exp(-(x * x + y * y) / (2 * sigma * sigma))
+        val denominator = 2 * Math.PI * sigma
+        return numerator / denominator
     }
 
+    private fun unsharp() {
 
-    private void unsharp(){
-        for(int i =0;i<img.getHeight();i++) {
-            for (int j = 0; j < img.getWidth() ; j++) {
-                int original = imgArray[i * img.getWidth() + j];
-                int blur =     newImgArray[i * img.getWidth() + j];
-                newImgArray[i * img.getWidth() + j] = Color.rgb(
-                        toRange(255,0,abs((int) ((Color.red(original) + amount*(Color.red(original) -Color.red(blur))))))
-                        ,toRange(255,0,abs((int)((Color.green(original) + amount*(Color.green(original) -Color.green(blur))))))
-                        ,toRange(255,0,abs((int)((Color.blue(original) + amount*(Color.blue(original) -Color.blue(blur)))))));
-                //newImgArray[i * img.getWidth() + j] = Color.rgb(
-                //        abs((int)(Color.red(original) + amount*(Color.red(original) -Color.red(blur)))),
-                //                abs((int)(Color.green(original) + amount*(Color.green(original) -Color.green(blur)))),
-                //                        abs((int)(Color.blue(original) + amount*(Color.blue(original) -Color.blue(blur)))));
+        for (i in 0 until img!!.height) {
+            for (j in 0 until img!!.width) {
+                val original = imgArray[i * img!!.width + j]
+                val blur = newImgArray[i * img!!.width + j]
+                newImgArray[i * img!!.width + j] = Color.rgb(
+                    toRange(
+                        255, 0,
+                        abs(
+                            (Color.red(original) + amount!! * (Color.red(original) - Color.red(blur))).toInt()
+                                .toDouble()
+                        )
+                            .toInt()
+                    ),
+                    toRange(
+                        255, 0,
+                        abs(
+                            (Color.green(original) + amount!! * (Color.green(original) - Color.green(
+                                blur
+                            ))).toInt()
+                                .toDouble()
+                        )
+                            .toInt()
+                    ),
+                    toRange(
+                        255, 0,
+                        abs(
+                            (Color.blue(original) + amount!! * (Color.blue(original) - Color.blue(
+                                blur
+                            ))).toInt()
+                                .toDouble()
+                        )
+                            .toInt()
+                    )
+                )
 //
             }
         }
     }
-    private int toRange(int max,int min, int number){
-        if(number>max)return max;
-        else return Math.max(number, min);
+
+    private fun toRange(max: Int, min: Int, number: Int): Int {
+        return if (number > max) max
+        else max(number.toDouble(), min.toDouble()).toInt()
     }
-    public Bitmap getNewImg(){
-        newImg = Bitmap.createBitmap(img.getWidth(),img.getHeight(),ARGB_8888);
-        newImg.setPixels(newImgArray,0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
-        return newImg;
+
+    fun getNewImg(): Bitmap {
+        Log.i("unsharp", "fuck")
+        newImg = Bitmap.createBitmap(img!!.width, img!!.height, Bitmap.Config.ARGB_8888)
+        newImg!!.setPixels(newImgArray, 0, img!!.width, 0, 0, img!!.width, img!!.height)
+        return newImg as Bitmap
     }
 
 }

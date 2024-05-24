@@ -102,14 +102,30 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
             2->{
                 drawPoints(canvas)
                 createSpline(canvas,
-                    СubicSpline(
+                    CubicSpline(
                         coordinateArrayList
                     )
                 )
             }
-            3-> {
-                coordinateArrayList = ArrayList()
-                deletePointArrayList = ArrayList()
+            3->{
+                if (coordinateArrayList.size <= 2) {
+                    drawPoints(canvas)
+                    drawPath(canvas)
+                    Toast.makeText(
+                        context,
+                        "There are not enough points, add more points", Toast.LENGTH_LONG
+                    ).show()
+
+                } else {
+                    drawPoints(canvas)
+                    createOpenBSpline(
+                        canvas,
+                        CloseBSpline(
+                            coordinateArrayList
+                        )
+                    )
+
+                }
             }
             4-> {
                 if (coordinateArrayList.size!=0) {
@@ -132,11 +148,36 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
                 drawPoints(canvas)
                 drawPath(canvas)
             }
+
+            6-> {
+                coordinateArrayList = ArrayList()
+                deletePointArrayList = ArrayList()
+            }
         }
 
         operatingModes = -1
 
 
+    }
+    private fun createOpenBSpline(canvas: Canvas,closeBSpline: CloseBSpline){
+        for(i in 0 until coordinateArrayList.size-2) {
+            var tempMatrix = closeBSpline.createIntermediateMatrix(i)
+            var oldCoordinate = closeBSpline.getPoint(0f,tempMatrix)
+            var t = 0f
+
+            while (t<=1)
+            {
+
+                t+=0.01f
+                var newCooradinate = closeBSpline.getPoint(t,tempMatrix)
+
+                canvas.drawLine(oldCoordinate[0][0],oldCoordinate[0][1],
+                    newCooradinate[0][0],newCooradinate[0][1],splinePath)
+                oldCoordinate = newCooradinate
+
+            }
+
+        }
     }
 
     private fun createCloseBSpline(canvas: Canvas, closeBSpline: CloseBSpline) {
@@ -172,7 +213,7 @@ class SplineCanvasView (context: Context, attributeSet: AttributeSet):View(conte
 
     }
 
-    private fun createSpline(canvas: Canvas,spline : СubicSpline){
+    private fun createSpline(canvas: Canvas,spline : CubicSpline){
         for(point in 0 until coordinateArrayList.size-1 )
         {
             var i = coordinateArrayList[point][0]

@@ -27,7 +27,7 @@ class SplineActivity: AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                Toast.makeText(this@SplineActivity,"Вы выбрали ${parent?.getItemAtPosition(position).toString()}",Toast.LENGTH_LONG).show()
+                //Toast.makeText(this@SplineActivity,"Вы выбрали ${parent?.getItemAtPosition(position).toString()}",Toast.LENGTH_LONG).show()
                 itemPosition = position
 
             }
@@ -46,7 +46,7 @@ class SplineActivity: AppCompatActivity() {
         }
 
         binding.update.setOnClickListener{
-            binding.splineCanvasView.setOperatingModes(3)
+            binding.splineCanvasView.setOperatingModes(6)
         }
 
 

@@ -48,6 +48,7 @@
         <item>Close-B-Spline</item>
         <item>Bezier curve</item>
         <item>Cubic spline</item>
+        <item>Open-B-Spline</item>
     </string-array>
     <string name="masking_core_radius">Ядро (r): %d</string>
     <string name="masking_amount">Объём: %d</string>
