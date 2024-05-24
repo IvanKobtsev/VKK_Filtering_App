@@ -49,7 +49,7 @@ class SeekbarFragment : Fragment() {
 
     }
 
-    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarDataList: MutableList<SeekbarData>, seekbarDataIndex: Int) {
+    fun showBar(textView: Button, stringID: Int, liveDataToEdit: MutableLiveData<Float>, seekbarDataList: List<SeekbarData>, seekbarDataIndex: Int) {
 
         canChangeValue = false
         taskViewModel.textViewToWrite.value = textView

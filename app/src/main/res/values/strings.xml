@@ -49,10 +49,10 @@
         <item>Bezier curve</item>
         <item>Cubic spline</item>
     </string-array>
-    <string name="masking_core_radius">Ядро (r): %d</string>
-    <string name="masking_amount">Объём: %d</string>
-    <string name="retouch_brush_radius">Кисть (r): %d</string>
-    <string name="retouch_intensity">Интенсивность: %d</string>
+    <string name="masking_core_radius">Ядро (r): %s</string>
+    <string name="masking_amount">Объём: %s</string>
+    <string name="retouch_brush_radius">Кисть (r): %s</string>
+    <string name="retouch_intensity">Интенсивность: %s</string>
     <string name="minValue">0</string>
     <string name="maxValue">100</string>
     <!-- TODO: Remove or change this placeholder text -->
