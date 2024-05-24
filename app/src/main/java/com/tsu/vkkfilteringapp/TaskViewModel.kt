@@ -2,11 +2,10 @@ package com.tsu.vkkfilteringapp
 
 import android.graphics.Bitmap
 import android.view.MotionEvent
-import android.widget.TextView
+import android.widget.Button
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsu.vkkfilteringapp.graphics2d.Triangle2D
-import com.tsu.vkkfilteringapp.graphics3d.Triangle3D
 
 class TaskViewModel : ViewModel() {
 
@@ -19,6 +18,8 @@ class TaskViewModel : ViewModel() {
     var isApplyingChanges = false
     var selectedTool = -1
     var tooLargeImage = MutableLiveData(false)
+//    var seekbarFragment = SeekbarFragment.newInstance()
+    var seekbarWrapperHidden = MutableLiveData(false)
 
     // Rotation-related
     var rotationToolNeedToUpdate = MutableLiveData(false)
@@ -43,6 +44,8 @@ class TaskViewModel : ViewModel() {
     // Masking-related
     var maskToolNeedToUpdate = MutableLiveData(false)
     var maskToolCancelPressed = MutableLiveData(false)
+    var maskToolAmountValue = MutableLiveData<Float>() // до 2х
+    var maskToolCoreRadiusValue = MutableLiveData<Float>() // от 1 до 5
 
     // Affine-related
     var affineToolNeedToUpdate = MutableLiveData(false)
@@ -55,6 +58,7 @@ class TaskViewModel : ViewModel() {
     var affineToolCroppedImageBorders = listOf(0F, 0F, 0F, 0F)
 
     // Seekbar-related
-    var textViewToWrite = MutableLiveData<TextView>()
+    var textViewToWrite = MutableLiveData<Button>()
+    var textViewStringID = 0
 
 }
