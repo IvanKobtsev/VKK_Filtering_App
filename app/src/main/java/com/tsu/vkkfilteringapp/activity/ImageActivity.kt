@@ -49,7 +49,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.opencv.core.Point
 import pl.droidsonroids.gif.InputSource.AssetSource
 import java.io.File
 import java.io.FileOutputStream
@@ -541,7 +540,7 @@ class ImageActivity : AppCompatActivity() {
                                 newBitmap = filters.contrast(editedImage, 125)
                             }
                             1 -> {
-                                newBitmap = filters.contrast(editedImage, -125)
+                                newBitmap = filters.contrast(editedImage, 10)
                             }
                             2 -> {
                                 newBitmap = filters.saturation(editedImage, 125)
@@ -562,7 +561,7 @@ class ImageActivity : AppCompatActivity() {
                                 newBitmap = filters.commonBlur(editedImage, 25, 1.0)
                             }
                             8 -> {
-                                newBitmap = filters.blurGaussian(editedImage, 1, 1.0, 0.0)
+                                newBitmap = filters.blurGaussian(editedImage, 1, 1.0, 0.1)
                             }
                             9 -> {
                                 newBitmap = filters.blurGaussian(editedImage, 5, 1.0, 0.5)
