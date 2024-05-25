@@ -49,7 +49,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.opencv.core.Point
 import pl.droidsonroids.gif.InputSource.AssetSource
 import java.io.File
 import java.io.FileOutputStream
