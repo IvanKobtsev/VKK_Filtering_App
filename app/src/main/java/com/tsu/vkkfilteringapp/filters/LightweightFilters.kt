@@ -1,6 +1,7 @@
 package com.tsu.vkkfilteringapp.filters
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import kotlin.math.max
 
 class LightweightFilters {
     fun illumination(img: Bitmap, degree: Double): Bitmap {
-        var newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         var imgArray = IntArray(img.width * img.height)
         var newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -48,7 +49,7 @@ class LightweightFilters {
     }
 
     fun blackout(img: Bitmap, degree: Double): Bitmap {
-        var newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         var imgArray = IntArray(img.width * img.height)
         var newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -78,7 +79,7 @@ class LightweightFilters {
     }
 
     fun colorEnhancement(img: Bitmap, degree: Double,color: Char): Bitmap {
-        var newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         var imgArray = IntArray(img.width * img.height)
         var newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -137,7 +138,7 @@ class LightweightFilters {
     }
 
     fun contrast(img: Bitmap, degree: Int): Bitmap {
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -186,7 +187,7 @@ class LightweightFilters {
     }
 
     fun commonBlur(img: Bitmap,radius: Int, compromise: Double): Bitmap{
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -231,7 +232,7 @@ class LightweightFilters {
     }
 
     fun mosaicFilter(img: Bitmap,radius: Int, compromise: Double): Bitmap {
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray, 0, img.width, 0, 0, img.width, img.height)
@@ -272,10 +273,8 @@ class LightweightFilters {
                             )
                     }
                 }
-
             }
         }
-
 
         newImage.setPixels(newImgArray, 0, img.width, 0, 0, img.width, img.height)
         return newImage
@@ -283,7 +282,7 @@ class LightweightFilters {
     }
 
     fun inversion(img: Bitmap): Bitmap{
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -315,7 +314,7 @@ class LightweightFilters {
 
     }
     fun saturation(img: Bitmap,value: Int): Bitmap{
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)
@@ -354,7 +353,7 @@ class LightweightFilters {
 
     }
     fun blurGaussian(img: Bitmap,radius: Int, compromise: Double,sigma: Double): Bitmap {
-        val newImage = Bitmap.createBitmap(img)
+        val newImage = img.copy(Bitmap.Config.ARGB_8888, true)
         val imgArray = IntArray(img.width * img.height)
         val newImgArray = IntArray(img.width * img.height)
         img.getPixels(imgArray,0, img.width, 0, 0, img.width, img.height)

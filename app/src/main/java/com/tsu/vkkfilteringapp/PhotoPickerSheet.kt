@@ -1,8 +1,10 @@
 package com.tsu.vkkfilteringapp
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -14,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.ablanco.imageprovider.ImageProvider
@@ -34,12 +37,19 @@ class PhotoPickerSheet : BottomSheetDialogFragment() {
         taskViewModel = ViewModelProvider(activity)[TaskViewModel::class.java]
 
         binding.cameraPick.setOnClickListener {
-            ImageProvider(activity).getImage(ImageSource.CAMERA){ bitmap ->
-                if (bitmap != null) {
-                    taskViewModel.image.value = bitmap
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED) {
+
+                ImageProvider(activity).getImage(ImageSource.CAMERA){ bitmap ->
+                    if (bitmap != null) {
+                        taskViewModel.image.value = bitmap
+                    }
                 }
+                dismiss()
+
             }
-            dismiss()
         }
 
         binding.galleryPick.setOnClickListener {

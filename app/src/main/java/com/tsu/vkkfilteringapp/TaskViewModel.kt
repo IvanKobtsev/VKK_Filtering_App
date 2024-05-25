@@ -31,7 +31,7 @@ class TaskViewModel : ViewModel() {
 
     // Filters-related
     var filtersToolNeedToUpdate = MutableLiveData(false)
-    var filtersToolCancelPressed = MutableLiveData(false)
+    var filtersToolSelected = -1
 
     // Scaling-related
     var scalingToolNeedToUpdate = MutableLiveData(false)
@@ -39,16 +39,16 @@ class TaskViewModel : ViewModel() {
 
     // Faces-related
     var facesToolNeedToUpdate = MutableLiveData(false)
-    var facesToolCancelPressed = MutableLiveData(false)
 
     // Retouch-related
     var retouchToolNeedToUpdate = MutableLiveData(false)
-    var retouchToolCancelPressed = MutableLiveData(false)
+    var retouchToolBrushRadius = MutableLiveData<Float>()
+    var retouchToolIntensity = MutableLiveData<Float>()
 
     // Masking-related
     var maskToolNeedToUpdate = MutableLiveData(false)
-    var maskToolAmountValue = MutableLiveData<Float>() // до 2х
-    var maskToolCoreRadiusValue = MutableLiveData<Float>() // от 1 до 5
+    var maskToolAmountValue = MutableLiveData<Float>()
+    var maskToolCoreRadiusValue = MutableLiveData<Float>()
 
     // Affine-related
     var affineToolNeedToUpdate = MutableLiveData(false)

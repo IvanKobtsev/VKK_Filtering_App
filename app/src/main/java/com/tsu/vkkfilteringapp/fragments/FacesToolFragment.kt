@@ -14,10 +14,14 @@ class FacesToolFragment : Fragment() {
     private lateinit var binding: FragmentFacesToolBinding
     private lateinit var taskViewModel: TaskViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         taskViewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
+
+        binding.facesApply.setOnClickListener {
+            taskViewModel.facesToolNeedToUpdate.value = true
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

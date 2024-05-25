@@ -24,11 +24,14 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.tsu.vkkfilteringapp.BasicSaveChangesFragment
+import com.tsu.vkkfilteringapp.FaceDetection
 import com.tsu.vkkfilteringapp.PhotoPickerSheet
 import com.tsu.vkkfilteringapp.R
+import com.tsu.vkkfilteringapp.RetouchingBrush
 import com.tsu.vkkfilteringapp.TaskViewModel
 import com.tsu.vkkfilteringapp.databinding.ActivityImageBinding
 import com.tsu.vkkfilteringapp.filters.AffineTransformation
+import com.tsu.vkkfilteringapp.filters.LightweightFilters
 import com.tsu.vkkfilteringapp.filters.RotationFilter
 import com.tsu.vkkfilteringapp.filters.UnsharpMasking
 import com.tsu.vkkfilteringapp.fragments.AffineSavingFragment
@@ -47,6 +50,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.opencv.core.Point
+import pl.droidsonroids.gif.InputSource.AssetSource
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -63,8 +67,15 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var newBitmap: Bitmap
     private lateinit var imageName: String
 
+    // Filters-related
+    private lateinit var filters: LightweightFilters
+
+    // Retouch-related
+    private lateinit var retouchFragment: RetouchToolFragment
+
     // Masking-related
     private lateinit var maskingTool: UnsharpMasking
+    private lateinit var retouchTool: RetouchingBrush
 
     // Affine-related
     private lateinit var affineFragment: AffineToolFragment
@@ -105,7 +116,8 @@ class ImageActivity : AppCompatActivity() {
     private var imageViewOriginalPosition = 0F
     private var askedAlready = false
 
-    private var affineTransformation = AffineTransformation.newInstance()
+    private val faceDetection = FaceDetection.newInstance()
+    private val affineTransformation = AffineTransformation.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,8 +126,10 @@ class ImageActivity : AppCompatActivity() {
         taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
         binding.imageToEdit.init(this, assets)
 
-        // Masking filter
+        // Setting filters
+        filters = LightweightFilters()
         maskingTool = UnsharpMasking()
+        retouchTool = RetouchingBrush()
 
         // Transitions setting
         buttonTransitions = listOf(
@@ -129,13 +143,14 @@ class ImageActivity : AppCompatActivity() {
 
         // Fragments setting
         affineFragment = AffineToolFragment.newInstance()
+        retouchFragment = RetouchToolFragment.newInstance()
 
         fragments = listOf(
             RotationToolFragment.newInstance(),
             FiltersToolFragment.newInstance(),
             ScalingToolFragment.newInstance(),
             FacesToolFragment.newInstance(),
-            RetouchToolFragment.newInstance(),
+            retouchFragment,
             MaskingToolFragment.newInstance(),
             affineFragment)
 
@@ -207,6 +222,7 @@ class ImageActivity : AppCompatActivity() {
 
         taskViewModel.image.observe(this) {
             editedImage = it
+            newBitmap = it
             binding.imageToEdit.setImageBitmap(editedImage)
             binding.imageToEdit.setAdjustViewBounds(true)
             binding.imageToEdit.setScaleType(ImageView.ScaleType.FIT_XY)
@@ -254,12 +270,29 @@ class ImageActivity : AppCompatActivity() {
                     binding.imageToEdit.setImageBitmap(newBitmap)
 
                     lockToolScrollAndSave()
-                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, basicSavingFragment).commit()
+                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, affineSavingFragment).commit()
                 }
             }
         }
 
-        //
+        // Filters observers
+        taskViewModel.filtersToolNeedToUpdate.observe(this) {
+            if (it) {
+
+                lockUI()
+                binding.progressBarOverlay.startAnimation(animFadeIn)
+
+                GlobalScope.launch(Dispatchers.Main) {
+
+                    processImage()
+
+                    binding.imageToEdit.setImageBitmap(newBitmap)
+
+                    lockToolScrollAndSave()
+                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, basicSavingFragment).commit()
+                }
+            }
+        }
 
         // Scaling observers
         taskViewModel.scalingToolNeedToUpdate.observe(this) {
@@ -280,7 +313,33 @@ class ImageActivity : AppCompatActivity() {
             }
         }
 
-        // Masking Observers
+        // Faces observers
+        taskViewModel.facesToolNeedToUpdate.observe(this) {
+            if (it) {
+
+                lockUI()
+                binding.progressBarOverlay.startAnimation(animFadeIn)
+
+                GlobalScope.launch(Dispatchers.Main) {
+
+                    processImage()
+
+                    binding.imageToEdit.setImageBitmap(newBitmap)
+
+                    lockToolScrollAndSave()
+                    supportFragmentManager.beginTransaction().replace(binding.toolProps.id, basicSavingFragment).commit()
+                }
+            }
+        }
+
+        // Retouch observers
+        taskViewModel.retouchToolNeedToUpdate.observe(this) {
+            if (it) {
+                editedImage = newBitmap
+            }
+        }
+
+        // Masking observers
         taskViewModel.maskToolNeedToUpdate.observe(this) {
             if (it) {
 
@@ -300,16 +359,11 @@ class ImageActivity : AppCompatActivity() {
         }
 
         // Affine Observers
-
         taskViewModel.affineToolCancelPressed.observe(this) {
             if (it) {
                 unlockToolScrollAndSave()
                 revertChanges()
             }
-        }
-
-        taskViewModel.affineToolSelectedPoint.observe(this) {
-
         }
 
         taskViewModel.tooLargeImage.observe(this) {
@@ -362,7 +416,10 @@ class ImageActivity : AppCompatActivity() {
                         PhotoPickerSheet().show(supportFragmentManager, "photoPicker")
                     }
                     else {
-                        when (taskViewModel.selectedTool)  {
+                        when (taskViewModel.selectedTool) {
+                            4 -> {
+                                retouchFragment.enableSaving()
+                            }
                             6 -> {
                                 affineFragment.setPoint(it.x, it.y)
                                 checkForNullPoints()
@@ -397,6 +454,13 @@ class ImageActivity : AppCompatActivity() {
                                     }
                                 }
                             }
+                            4 -> {
+                                newBitmap = RetouchingBrush.retouching(it.x.toInt(), it.y.toInt(),
+                                    taskViewModel.retouchToolBrushRadius.value!!.toInt(),
+                                    newBitmap,
+                                    taskViewModel.retouchToolIntensity.value!!.toDouble())
+                                binding.imageToEdit.setImageBitmap(newBitmap)
+                            }
                         }
                     }
                 }
@@ -410,6 +474,17 @@ class ImageActivity : AppCompatActivity() {
         taskViewModel.hasUnsavedChanges.observe(this) {
             if (it) {
                 when (taskViewModel.selectedTool) {
+                    0 -> {
+                        editedImage = if (taskViewModel.affineToolShowCropped.value!!) {
+                            affineTransformation.getCroppedImage(newBitmap, taskViewModel)
+                        } else {
+                            newBitmap
+                        }
+
+                        binding.imageToEdit.setImageBitmap(editedImage)
+                        unlockToolScrollAndSave()
+                        switchToolProps(-1)
+                    }
                     6 -> {
                         editedImage = if (taskViewModel.affineToolShowCropped.value!!) {
                             affineTransformation.getCroppedImage(newBitmap, taskViewModel)
@@ -461,7 +536,50 @@ class ImageActivity : AppCompatActivity() {
                             taskViewModel)
                     }
                     1 -> {
-                        // Filters
+                        when (taskViewModel.filtersToolSelected) {
+                            0 -> {
+                                newBitmap = filters.contrast(editedImage, 125)
+                            }
+                            1 -> {
+                                newBitmap = filters.contrast(editedImage, -125)
+                            }
+                            2 -> {
+                                newBitmap = filters.saturation(editedImage, 125)
+                            }
+                            3 -> {
+                                newBitmap = filters.saturation(editedImage, -125)
+                            }
+                            4 -> {
+                                newBitmap = filters.inversion(editedImage)
+                            }
+                            5 -> {
+                                newBitmap = filters.commonBlur(editedImage, 5, 0.5)
+                            }
+                            6 -> {
+                                newBitmap = filters.commonBlur(editedImage, 15, 0.75)
+                            }
+                            7 -> {
+                                newBitmap = filters.commonBlur(editedImage, 25, 1.0)
+                            }
+                            8 -> {
+                                newBitmap = filters.blurGaussian(editedImage, 1, 1.0, 0.0)
+                            }
+                            9 -> {
+                                newBitmap = filters.blurGaussian(editedImage, 5, 1.0, 0.5)
+                            }
+                            10 -> {
+                                newBitmap = filters.blurGaussian(editedImage, 10, 1.0, 1.0)
+                            }
+                            11 -> {
+                                newBitmap = filters.mosaicFilter(editedImage, 5, 1.0)
+                            }
+                            12 -> {
+                                newBitmap = filters.mosaicFilter(editedImage, 10, 1.0)
+                            }
+                            13 -> {
+                                newBitmap = filters.mosaicFilter(editedImage, 25, 1.0)
+                            }
+                        }
                     }
                     2 -> {
                         newBitmap = affineTransformation.scaleImage(
@@ -470,7 +588,7 @@ class ImageActivity : AppCompatActivity() {
                             taskViewModel)
                     }
                     3 -> {
-                        // Faces
+                        newBitmap = faceDetection.detectFaces(editedImage, resources, baseContext)
                     }
                     4 -> {
                         // Retouch
@@ -514,6 +632,7 @@ class ImageActivity : AppCompatActivity() {
                 binding.toolProps.y += 500
                 buttonTransitions[taskViewModel.selectedTool].reverseTransition(transitionDuration)
                 taskViewModel.selectedTool = -1
+                binding.imageToEdit.setImageBitmap(editedImage)
             }
             else if (newActiveFragment == -1) {
                 supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[taskViewModel.selectedTool]).commit()
@@ -523,12 +642,15 @@ class ImageActivity : AppCompatActivity() {
                 buttonTransitions[newActiveFragment].startTransition(transitionDuration)
                 supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[newActiveFragment]).commit()
                 taskViewModel.selectedTool = newActiveFragment
+                binding.imageToEdit.setImageBitmap(editedImage)
+                newBitmap = editedImage
             }
             else {
                 buttonTransitions[newActiveFragment].startTransition(transitionDuration)
                 supportFragmentManager.beginTransaction().replace(binding.toolProps.id, fragments[newActiveFragment]).commit()
                 taskViewModel.selectedTool = newActiveFragment
                 binding.toolProps.y -= 500
+                binding.imageToEdit.setImageBitmap(newBitmap)
             }
             binding.imageToEdit.invalidate()
             taskViewModel.seekbarWrapperHide.value = true

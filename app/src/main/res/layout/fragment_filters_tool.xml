@@ -1,9 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="60dp"
     tools:context=".fragments.FiltersToolFragment">
 
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/filter0Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_contrast_plus50"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter1Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_contrast_minus50"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter2Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_saturation_plus50"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter3Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_saturation_minus50"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter4Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_inversion"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter5Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_common_blur_light"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter6Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_common_blur_medium"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter7Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_common_blur_strong"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter8Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_gaussian_blur_light"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter9Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_gaussian_blur_medium"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter10Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_gaussian_blur_strong"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter11Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_mosaic_tiny"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter12Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_mosaic_medium"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/filter13Call"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_transition_seekbar_caller"
+            android:fontFamily="@font/tektur_medium"
+            android:paddingHorizontal="8dp"
+            android:text="@string/filters_mosaic_big"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/MainFontColor"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</HorizontalScrollView>

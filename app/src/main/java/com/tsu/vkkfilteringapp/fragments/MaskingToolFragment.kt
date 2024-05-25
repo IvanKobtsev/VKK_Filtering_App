@@ -44,6 +44,7 @@ class MaskingToolFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         taskViewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
+
         liveData = listOf(
             taskViewModel.maskToolCoreRadiusValue,
             taskViewModel.maskToolAmountValue
@@ -65,6 +66,7 @@ class MaskingToolFragment : Fragment() {
         }
 
         binding.coreRadiusCall.setOnClickListener {
+            switchSeekbar(0)
             switchSeekbar(0)
         }
 

@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.tsu.vkkfilteringapp.R
 import com.tsu.vkkfilteringapp.TDCubeRenderer
 import com.tsu.vkkfilteringapp.databinding.ActivityMainBinding
+import org.opencv.android.OpenCVLoader
 
 class MainActivity : AppCompatActivity() {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
@@ -29,9 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var animFadeIn: Animation
     private lateinit var animFadeOut: Animation
     private lateinit var animAppear: Animation
-    private lateinit var animDisappear: Animation
     private lateinit var buttons: List<Button>
-
+    private var fullyLoaded = false
 
     init {
         instance = this
@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         binding.bgPlayer.setOnPreparedListener { mediaPlayer: MediaPlayer ->
 
             mediaPlayer.isLooping = true
+            fullyLoaded = true
 
             mediaPlayer.setScreenOnWhilePlaying(false)
             val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
@@ -98,12 +99,18 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.start()
 
             binding.overlay.startAnimation(animAppear)
-            Log.e("resumed", "resumed" + binding.overlay.alpha.toString())
             overlayAnimTimer.start()
         }
 
         registerPermission()
         requestPermission()
+
+        if(!OpenCVLoader.initDebug()) {
+//            Toast.makeText(this, "OpenCV is not found.", Toast.LENGTH_SHORT).show()
+        }
+        else{
+//            Toast.makeText(this, "OpenCV is SUCCESSFULLY found!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // Timer
@@ -125,8 +132,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        for (button in buttons) {
-            button.isEnabled = false
+        if (!fullyLoaded) {
+            for (button in buttons) {
+                button.isEnabled = false
+            }
         }
     }
 

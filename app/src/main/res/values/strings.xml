@@ -58,4 +58,20 @@
     <string name="max_value">100</string>
     <string name="rotation_value">Повернуть на: %d°</string>
     <string name="scaling_value">Увеличить в: %s раз(а)</string>
+    <string name="find_faces">Найти лица</string>
+    <string name="filters_contrast_minus50">Контраст -50</string>
+    <string name="filters_contrast_plus50">Контраст +50</string>
+    <string name="filters_saturation_plus50">Насыщенность +50</string>
+    <string name="filters_saturation_minus50">Насыщенность -50</string>
+    <string name="filters_inversion">Инверсия</string>
+    <string name="filters_common_blur_light">Размытие (слабое)</string>
+    <string name="filters_common_blur_medium">Размытие (среднее)</string>
+    <string name="filters_common_blur_strong">Размытие (сильное)</string>
+    <string name="filters_gaussian_blur_light">Разм. Гаусса (слабое)</string>
+    <string name="filters_gaussian_blur_medium">Разм. Гаусса (среднее)</string>
+    <string name="filters_gaussian_blur_strong">Разм. Гаусса (сильное)</string>
+    <string name="filters_mosaic_tiny">Мозаика (мелкая)</string>
+    <string name="filters_mosaic_medium">Мозаика (средняя)</string>
+    <string name="filters_mosaic_big">Мозаика (крупная)</string>
+
 </resources>
