@@ -50,6 +50,9 @@
         <item>Cubic spline</item>
         <item>Open-B-Spline</item>
     </string-array>
+
+    <string name="dialog_title">Разрешения</string>
+    <string name="dialog_message">Нам нужны ваши разрешения, чтобы мы могли сохранять ваши изображения с камеры.</string>
     <string name="masking_core_radius">Ядро (r): %s</string>
     <string name="masking_amount">Объём: %s</string>
     <string name="retouch_brush_radius">Кисть (r): %s</string>
