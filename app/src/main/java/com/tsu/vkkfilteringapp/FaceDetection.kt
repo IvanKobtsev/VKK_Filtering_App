@@ -5,8 +5,15 @@ import android.content.Context.MODE_PRIVATE
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.get
+import androidx.core.graphics.green
+import androidx.core.graphics.red
+import com.tsu.vkkfilteringapp.filters.LightweightFilters
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -33,12 +40,13 @@ class FaceDetection {
 
     fun detectFaces(input: Bitmap, resources: Resources, context: Context): Bitmap {
 
+        val filters = LightweightFilters()
+        val pixelCount = input.height * input.width
         val imageMat = Mat(input.getWidth(), input.getHeight(), CvType.CV_8UC4)
         val myBitmap32: Bitmap = input.copy(Bitmap.Config.ARGB_8888, true)
         Utils.bitmapToMat(myBitmap32, imageMat)
 
         getCascadeClassifier(resources, context)
-        Log.e("blya", cascadeClassifier.empty().toString())
 
         val faces = MatOfRect()
         cascadeClassifier.detectMultiScale(imageMat, faces)
@@ -47,9 +55,23 @@ class FaceDetection {
         Utils.matToBitmap(imageMat, bitmapToReturn)
 
         for (rect in faces.toArray()) {
+            var bitmapToCensor = Bitmap.createBitmap(rect.width, rect.height, Bitmap.Config.ARGB_8888)
             for (yi in 0..<rect.height) {
                 for (xi in 0..<rect.width) {
-                    bitmapToReturn.setPixel(rect.x + xi, rect.y + yi, Color.argb(0F, 0F, 0F, 0F))
+                    bitmapToCensor.setPixel(xi, yi, bitmapToReturn.getPixel(rect.x + xi, rect.y + yi))
+                }
+            }
+
+            bitmapToCensor = filters.commonBlur(bitmapToCensor, 20, 1.0)
+
+            for (yi in 0..<rect.height) {
+                for (xi in 0..<rect.width) {
+
+                    val color = bitmapToCensor.getPixel(xi, yi)
+
+                    if (!(color.red > 250 && color.green > 250 && color.blue > 250) && color.alpha != 0) {
+                        bitmapToReturn.setPixel(rect.x + xi, rect.y + yi, bitmapToCensor.getPixel(xi, yi))
+                    }
                 }
             }
         }

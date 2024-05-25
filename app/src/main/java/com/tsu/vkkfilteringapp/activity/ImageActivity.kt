@@ -520,7 +520,6 @@ class ImageActivity : AppCompatActivity() {
         // Seekbar wrapper setting
         taskViewModel.seekbarWrapperHide.value = true
         supportFragmentManager.beginTransaction().replace(binding.seekBarFragmentWrapper.id, seekBarFragment).commit()
-
     }
 
     private suspend fun processImage(){
@@ -541,7 +540,7 @@ class ImageActivity : AppCompatActivity() {
                                 newBitmap = filters.contrast(editedImage, 125)
                             }
                             1 -> {
-                                newBitmap = filters.contrast(editedImage, -125)
+                                newBitmap = filters.contrast(editedImage, 255)
                             }
                             2 -> {
                                 newBitmap = filters.saturation(editedImage, 125)
